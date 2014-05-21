@@ -9,6 +9,8 @@ tex/auto/*~
 *.exe
 __py*
 *.class
-*.mp4
+*.mod
+*.o
+*.Renviron
 
 !.gitignore

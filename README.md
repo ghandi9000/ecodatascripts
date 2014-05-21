@@ -1,37 +1,29 @@
-Project Template
+Data management
 ================
 
-Description
-
-Issues
-------
+This is a work in progress, slowing moving all the data creating/modification scripts to this repo
 
 Dependencies
 ------------
 
-Other projects/scripts required
-
-### Scripts
-
-* [functions](http://github.com/ghandi9000/functions)
-
-### Repositories
+### Raw data
 
 * [data](http://github.com/ghandi9000/data)
 
-Data
-----
+### Some functions
 
-* [long-bc-derived](http://github.com/ghandi9000/data)
+* [functions](http://github.com/ghandi9000/functions)
+
 
 Directory Layout
 ----------------
 
-* data-prep, data-trans contain scripts to clean and perform manipulations such as transformation between wide/long or constructing size classes from continuous variables.
-* functions.R stores store user-defined functions
-* etc.
+Ideally each innermost subdirectory has its own readme.
 
-References
-----------
+* **read**: scripts for reading data from master files
+* **clean**: scripts to do preliminary cleaning of data (i.e. lowercase, remove unecessary columns, rename columns, etc)
+* **trans**: scripts that transform the data (i.e. wide->long)
+* **vars**: scripts to create new variables
 
-Papers, codes
+Issues
+------
