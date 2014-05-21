@@ -10,7 +10,7 @@
 ##   thetaB is the angle between thetaA projected onto the 2d plane of the plot
 ##   and the vector from p through the center of the plot
 ##
-## Note: north if offset from the y-axis by +pi/4
+## Note: north if offset from the y-axis by -pi/4
 ##
 zval <- function(p, thetaS, thetaA) {
     offset = -pi/4 # North offest from y-axis
@@ -96,15 +96,4 @@ plotzvals <- function(dat, slope = "slope", aspect = "aspect",
     }
 }
 
-
-## Convert quadrat labels to be centered at origin of plot
-## New locations range from -4.5 to 4.5 in x and y directions
-center_quadrats <- function(x) {
-    newx = seq(-4.5, 4.5, 1)
-    xx = x
-    for (i in 1:length(x))
-        ifelse(!is.na(x[i]) && x[i] > 0 && x[i] <= 10,
-               { xx[i] = newx[x[i]] }, { xx[i] = NA })
-    return ( xx )
-}
 

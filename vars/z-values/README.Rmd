@@ -18,32 +18,22 @@ Z-values are altitude values relative to the center of the plots.
 
 The aspect of this plot points directly west ($270^\circ$)
 ### Data and function dependencies
-
-```r
-source("~/work/ecodatascripts/vars/zvalues/functions.R")
+```{r}
+source("~/work/ecodatascripts/vars/z-values/functions.R")
 dat <- read.csv("~/work/data/data/moose-wide.csv")
-dat$slope <- 2 * pi/360 * dat$slope8687  # convert slope to radians
-dat$aspect <- 2 * pi/360 * dat$asp  # convert aspect to radians
+dat$slope <- 2*pi/360 * dat$slope8687 # convert slope to radians
+dat$aspect <- 2*pi/360 * dat$asp # convert aspect to radians
 
-tst <- dat[dat$pplot == 22, ]  # plot 22
+tst <- dat[dat$pplot == 22,] # plot 22
 
 ## Change quadrat layout to coordinates, origin is center of plot
 tst$x <- center_quadrats(tst$bqudx)
 tst$y <- center_quadrats(tst$bqudy)
 ```
 
-
 ### Lattice Plot of altitudes at the base of trees in plot 22
-
-```r
+```{r plot22, echo = TRUE, results = "show"}
 ## Plot z-values for test plot
 plotzvals(tst, slope = "slope", aspect = "aspect")
 ```
-
-```
-## Loading required package: scatterplot3d
-```
-
-![plot of chunk plot22](figure/plot22.png) 
-
 

@@ -1,6 +1,6 @@
 ## Test z-value calculations
 
-source("~/work/data/scripts/zvalues/functions.R")
+source("~/work/ecodatascripts/vars/z-values/functions.R")
 dat <- read.csv("~/work/data/data/moose-wide.csv")
 dat$slope <- 2*pi/360 * dat$slope8687 # convert slope to radians
 dat$aspect <- 2*pi/360 * dat$asp # convert aspect to radians
