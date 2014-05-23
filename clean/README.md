@@ -14,5 +14,5 @@ Depends on [read-moose.R](https://github.com/ghandi9000/ecodatascripts/blob/mast
 * Creates PRIORDBH/PRIORBA/PRIORHT/PRIORBV (dbh/ba/ht/bv from prior time period)
 * Converts column names to lowercase
 * Removes unused columns
-* Creates [moose-wide.csv](http://github.com/ghandi9000/data/moose/moose-wide.csv)
+* Creates [moose-wide.csv](http://github.com/ghandi9000/data/moose)
 
