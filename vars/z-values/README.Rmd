@@ -1,5 +1,5 @@
 ## These scripts compute altitude values (z-values)
-Z-values are altitude values relative to the center of the plots.
+ - Z-values are altitude values relative to the center of the plots.
 
 ### Method to calculate z-values
 1. $z = r\cos(\theta_B) \tan(\theta_S)$, where $\theta_B$ is the angle between the slope aspect and the vector from a given point through the origin, $\theta_S$ is the slope angle. and $r$ is the distance from the origin to the point.
@@ -11,29 +11,25 @@ Z-values are altitude values relative to the center of the plots.
 
 ### Moosilauke
 * On Moosilauke, each plot has an azimuth and slope calculate along the azimuth.  Z-value are calculated from these values in addition to plant x,y coordinates.
-* The y-axis is oriented in the northeast direction for Moosilauke plots.
+* The y-axis is oriented along NW --> SE direction for Moosilauke plots.
 * The slope azimuth points downslope.  So, the slope from the top of the plot looking downhill through the origin.
 
 ## Example: Moosilauke permanent plot 22 
 
 The aspect of this plot points directly west ($270^\circ$)
 ### Data and function dependencies
-```{r}
+```{r data}
 source("~/work/ecodatascripts/vars/z-values/functions.R")
-dat <- read.csv("~/work/data/data/moose-wide.csv")
-dat$slope <- 2*pi/360 * dat$slope8687 # convert slope to radians
-dat$aspect <- 2*pi/360 * dat$asp # convert aspect to radians
+dat <- read.csv("~/work/data/moose/moose-wide.csv")
+dat$slprad <- pi/180 * dat$slope # convert slope to radians
+dat$aspect <- pi/180 * dat$asp # convert aspect to radians
 
 tst <- dat[dat$pplot == 22,] # plot 22
-
-## Change quadrat layout to coordinates, origin is center of plot
-tst$x <- center_quadrats(tst$bqudx)
-tst$y <- center_quadrats(tst$bqudy)
 ```
 
 ### Lattice Plot of altitudes at the base of trees in plot 22
 ```{r plot22, echo = TRUE, results = "show"}
 ## Plot z-values for test plot
-plotzvals(tst, slope = "slope", aspect = "aspect")
+plotzvals(tst, slope = "slprad", aspect = "aspect")
 ```
 

@@ -3,28 +3,57 @@
 ## Functions used to compute and test z-values
 ##
 ##########################################################################
+
+################################################################################
 ##
-##  compute z-values
-##  Angles are in radians
-##  thetaS is slope angle, thetaA is slope aspect, p is a point(quadx, quady),
-##   thetaB is the angle between thetaA projected onto the 2d plane of the plot
+##  Wrapper for zval to compute z-values for vector of points
+## - Angles are in radians
+## - theta_S: is slope angle
+## - theta_A: is slope aspect
+## - p: points (ie. c(quadx, quady))
+## - theta_B: the angle between theta_A projected onto the 2d plane of the plot
 ##   and the vector from p through the center of the plot
 ##
-## Note: north if offset from the y-axis by -pi/4
+################################################################################
+zvals <- function(ps, theta_S, theta_A) {
+    sapply(1:nrow(ps), FUN = function(i) zval(p=ps[i,], theta_S = theta_S[i], theta_A = theta_A[i]) )
+}
+
+################################################################################
 ##
-zval <- function(p, thetaS, thetaA) {
-    offset = -pi/4 # North offest from y-axis
-    r = sqrt(p[1]^2 + p[2]^2) # distance from p to origin
-    a = c(sin(thetaA + offset), cos(thetaA + offset)) # unit vector along slope aspect
-    ap <- sum(a * p) # vector product of a and p
-    frac <- round(ap/r, 15) # acos will return NA due to precision errors if frac slightly > 1
-    thetaB = acos( frac ) # angle between a and p
-    sign = ifelse(thetaB < 0, -1, 1) # sign of z-value
-    r * cos(thetaB) * tan(2*pi - thetaS)
+##  Compute z-values for a single point
+## - Angles are in radians
+## - theta_S: is slope angle
+## - theta_A: is slope aspect
+## - p: point (ie. c(quadx, quady))
+## - theta_B: the angle between theta_A projected onto the 2d plane of the plot
+##   and the vector from p through the center of the plot
+##
+## Note: north if offset from the y-axis by +5pi/4
+##
+################################################################################
+zval <- function(p, theta_S, theta_A) {
+    if (is.na(p[1])|| is.na(p[2]) || is.na(theta_S) || is.na(theta_A))
+        return ( NA )
+    offset = 5*pi/4                                        # North offest from y-axis
+    offset = offset + pi                                   # correct for slope aiming downhill
+    r = sqrt(p[1]^2 + p[2]^2)                             # distance from p to origin
+    a = c(sin(theta_A + offset), cos(theta_A + offset))           # unit vector along slope aspect
+    ap <- sum(a * p)                                      # vector product of a and p
+    frac <- round(ap/r, 15)                               # acos will return NA due to precision errors
+    theta_B = acos( frac )                                    # angle between a and p
+    sign = ifelse(theta_B < 0, -1, 1)                         # sign of z-value
+    r * cos(theta_B) * tan(theta_S)
 }
 
 
-## Test zvalues using simulated data: point in each quadrat
+################################################################################
+##
+##         Test zvalues using simulated data: point in each quadrat
+##
+## - slope/aspect in degrees
+##
+################################################################################
 showslope <- function(slope, aspect) {
     require(lattice)
     coords = expand.grid(x = seq(-4.5, 4.5, 1), y = seq(-4.5, 4.5, 1))
@@ -52,9 +81,18 @@ showslope <- function(slope, aspect) {
 }
 
 
-## Plot z-values given data, and add a horizontal plane as reference,
-##  Provide names of slope, aspect, x, y columns if different than default
-##  Specify type of "scatter" or "lattice"
+
+################################################################################
+##
+##                         Plot z-values given data
+##
+## - Adds a horizontal plane as reference (i.e. in the plane of the horizon)
+## - Provide names of slope, aspect, x, y columns if different than default
+## - slope/aspect should be in radians
+## - x,y should be centered on origin
+## - Specify type of "scatter" or "lattice" for different graphical output
+##
+################################################################################
 plotzvals <- function(dat, slope = "slope", aspect = "aspect",
                       xcol = "x", ycol = "y", type = "scatter") {
     slo = unique(dat[,slope])
@@ -69,7 +107,7 @@ plotzvals <- function(dat, slope = "slope", aspect = "aspect",
     if (type == "scatter") {
         ## 3d scatterplot
         require(scatterplot3d)
-        rounded <- round(abs(samp$z + min(samp$z)))    ## create a color palette
+        rounded <- round(abs(samp$z + min(samp$z)))    # create a color palette
         colfunc <- colorRampPalette(c("light blue","dark blue"))
         mypalette <- colfunc(length(unique(rounded)))
         cols <- mypalette[rounded+1]

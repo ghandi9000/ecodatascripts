@@ -115,13 +115,7 @@ toKeep <- c("pplot","splot","tag","spec","yrmort","elev","elevcl","asp","aspcl",
             paste0("bvgrowth",yrs))
 
 pp <- pp[,names(pp) %in% toKeep]
-write.csv(pp, "~/work/data/data/moose-wide.csv", row.names = FALSE)
+write.csv(pp, "~/work/data/moose/moose-wide.csv", row.names = FALSE)
 
-
-
-
-
-
-
-
-
+## cleanup
+rm(list=ls())

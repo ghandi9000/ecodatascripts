@@ -24,6 +24,7 @@ Ideally each innermost subdirectory has its own readme.
 * **clean**: scripts to do preliminary cleaning of data (i.e. lowercase, remove unecessary columns, rename columns, etc)
 * **trans**: scripts that transform the data (i.e. wide->long)
 * **vars**: scripts to create new variables
+* **recreate**: Scripts to recreate data sets.  These tie the read/clean/transform into the proper order.
 
 Issues
 ------
