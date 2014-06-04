@@ -6,7 +6,7 @@
 ## All quadrat numbers outside of range [1,10] are set to NA
 ##
 ##########################################################################
-dat <- read.csv("~/work/data/data/moose-wide.csv")
+dat <- read.csv("~/work/data/moose/moose-wide.csv")
 
 ##########################################################################
 ##
