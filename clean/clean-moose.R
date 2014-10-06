@@ -111,8 +111,9 @@ toKeep <- c("pplot","splot","tag","spec","yrmort","elev","elevcl","asp","aspcl",
             paste0("stat",yrs), paste0("dbh",yrs), paste0("bv",yrs), paste0("ba",yrs),
             paste0("ht",yrs), paste0("eht",yrs), paste0("decm",yrs), paste0("cpos",yrs),
             paste0("dbhgrowth",yrs), paste0("htgrowth",yrs), paste0("priordbh",yrs),
-            paste0("priorba",yrs), paste0("bagrowth",yrs), paste0("priorht",yrs), paste0("priorbv",yrs),
-            paste0("bvgrowth",yrs))
+            paste0("priorba",yrs), paste0("bagrowth",yrs), paste0("priorht",yrs),
+            paste0("priorbv",yrs), paste0("bvgrowth",yrs), paste0("clong",yrs),
+            paste0("cperp",yrs), paste0("crht",yrs))
 
 pp <- pp[,names(pp) %in% toKeep]
 write.csv(pp, "~/work/data/moose/moose-wide.csv", row.names = FALSE)
