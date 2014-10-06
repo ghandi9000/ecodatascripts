@@ -1,3 +1,8 @@
+---
+output:
+  html_document:
+    keep_md: yes
+---
 ```{r setup, echo = FALSE, results = "hide"}
 source("~/work/ecodatascripts/vars/crowns/model/fit-models.R")
 specTable <- table(dat$spec)[table(dat$spec) != 0]
