@@ -76,6 +76,13 @@ dat[areaRows87, "ecrarea87"] <- 0
 dat[depthRows86, "ecrdepth86"] <- 0
 dat[depthRows87, "ecrdepth87"] <- 0
 
+## Deal with negative values
+## - Set all estimated crown areas that are negative to be the minimum of observed areas
+cols <- grep("^crarea[0-9]|^crdepth[0-9]", names(dat))
+for (col in names(dat)[cols]) {
+    negs <- which(dat[, col] <= 0)
+}
+
 ## Write data
 write.csv(dat, "~/work/data/moose/moose-wide.csv", row.names=FALSE)
 

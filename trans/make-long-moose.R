@@ -8,7 +8,8 @@ pp <- read.csv("~/work/data/moose/moose-wide.csv")
 yrs <- c(86, 87, 98, 10)
 cols <- c("stat","decm","dbh","bv","ba","ht","eht","cht",
           "cpos","dbhgrowth","bagrowth","bvgrowth",
-          "htgrowth","priordbh","priorht","priorbv","priorba")
+          "htgrowth","priordbh","priorht","priorbv","priorba",
+          "crarea","ecrarea","crdepth","ecrdepth")
 
 ## find missing columns and make dummy columns with their names
 missing <- checkCols(pp, cols, yrs)
