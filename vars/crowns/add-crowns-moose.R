@@ -33,7 +33,7 @@ for (yr in yrs) {
     for (elev in elevs) {
         for (specGroup in names(specs)) {
             ## Crown area
-            rows <- dat$spec %in% specs[[specGroup]]
+            rows <- dat$spec %in% specs[[specGroup]] & !is.na(dat[, ba]) & !is.na(dat[, ht])
             pars <- coef(crwnAreaMods[[elev]][[specGroup]])
             dat[rows, crarea] <- pars[["a"]]*dat[rows, ba]^pars[["b"]] - pars[["c"]]*dat[rows, ht]
             ## Crown depth
@@ -43,7 +43,7 @@ for (yr in yrs) {
     }
 }
 
-## Compute crown variables from available data (when available):
+## Compute crown variables from available data:
 ## Crown area (horizontal cut through crown at widest point): pi * a * b
 ## 'a' and 'b' are long and short axes of ellipse (cperp and clong)
 ## Crown depth:

@@ -65,21 +65,53 @@ dat$crdepth <- ifelse(is.na(dat$crht86), dat$crht87, dat$crht86)  # 25 missing v
 ## - Crown depth: a * HT
 ##
 ################################################################################
-crwn_area <- crarea ~ a * ba^b + c*ht  # Crown area model
+crwn_area <- crarea ~ a*ba^b + c*ht    # Crown area model
 crwn_depth <- crdepth ~ ht             # Crown depth model
 
 ## Fit models
 library(plyr)
-hardwoods <- c("BEAL", "BECO", "ACSA", "SOAM")
+hardwoods <- c("BEAL", "BECO", "BEPA", "ACSA", "ACPE", "SOAM")
 
-## Crown area models
+## Crown area models (nonlinear)
 crwnAreaMods <- dlply(dat, .(elevcl), function(x) {
-    piruMod <- nls(crwn_area, data = x[x$spec == "PIRU", ], start = list(a = 100, b = .1, c = 0.01))
-    abbaMod <- nls(crwn_area, data = x[x$spec == "ABBA", ], start = list(a = 100, b = .1, c = 0.01))
-    becoMod <- nls(crwn_area, data = x[x$spec == "BECO" | x$spec == "BEAL" | x$spec == "BEPA", ],
-                   start = list(a = 100, b = .1, c = 0.01))
-    hardMod <- nls(crwn_area, data = x[x$spec %in% hardwoods, ], start = list(a = 100, b = .1, c = 0.01))
-    list("piru" = piruMod, "abba" = abbaMod, "beco" = becoMod, "hard" = hardMod)
+    ps <- expand.grid(a=200,   # starting parameters
+                      b=seq(0.1,10,length.out=10),
+                      c=seq(-1,1,length.out=10))
+                      ## d=seq(0.1,10,length.out=10))
+    mods <- list("piru"=NULL, "abba"=NULL, "beco"=NULL, "hard"=NULL)
+    specGroups <- list("piru" = c("PIRU"),        # species to use for each model
+                       "abba" = c("ABBA"),
+                       "beco" = c("BECO", "BEAL", "BEPA"),
+                       "hard" = hardwoods)
+    for (parSet in 1:nrow(ps)) {
+        ll <- as.list(ps[parSet, ])
+        for (mod in names(mods)) {
+            if (is.null(mods[[mod]])) {
+                cmodel <- NULL
+                try({
+                    cmodel <- nls(crwn_area, data = x[x$spec %in% specGroups[[mod]], ],
+                                        start = ll)
+                }, silent = TRUE)
+                if (!is.null(cmodel))
+                    mods[[mod]] <- cmodel
+            }
+        }
+    }
+    mods
+})
+
+## Crown area models (Linear)
+crwnAreaLin <- dlply(dat, .(elevcl), function(x) {
+    mods <- list("piru"=NULL, "abba"=NULL, "beco"=NULL, "hard"=NULL)
+    specGroups <- list("piru" = c("PIRU"),  # species to use for each model
+                       "abba" = c("ABBA"),
+                       "beco" = c("BECO", "BEAL", "BEPA"),
+                       "hard" = hardwoods)
+    for (mod in names(mods)) {
+        cmodel <- lm(crarea ~ ba + ht, data = x[x$spec %in% specGroups[[mod]], ])
+        mods[[mod]] <- cmodel
+    }
+    mods
 })
 
 ## Crown depth models
