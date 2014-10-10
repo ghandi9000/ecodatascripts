@@ -89,22 +89,37 @@ dat[depthRows87, "ecrdepth87"] <- 0
 ## - Set all estimated crown areas/depths that are negative to be the minimum of
 ##   observed crown areas for each combination of species group/elevation
 ## NOTE: all observed areas/depths are from 86/87
-area8 <- c("crarea86", "crarea87")
-earea8 <- paste0("e", area8)
-depth8 <- c("crdepth86", "crdepth87")
-edepth8 <- paste0("e", depth8)
-mins <- lapply(specs, FUN = function(sppGroup) {
-    for (e in elevs) {
-        rows <- dat$spec %in% unlist(sppGroup) & dat$elevcl == e &
-            (dat[, earea8[1]] == 0 | dat[, earea8[2]] == 0)
-        min(dat[])
-    }
+areaMins <- dlply(dat, .(elevcl), function(x) {
+    mins86 <- lapply(specs, function(sppGroup)
+        min(x[x$spec %in% sppGroup & x$ecrarea86 == 0, "crarea86"], na.rm=T))
+    mins87 <- lapply(specs, function(sppGroup)
+        min(x[x$spec %in% sppGroup & x$ecrarea87 == 0, "crarea87"], na.rm=T))
+    pmin(unlist(mins86), unlist(mins87), na.rm=T)
 })
 
+depthMins <- dlply(dat, .(elevcl), function(x) {
+    mins86 <- lapply(specs, function(sppGroup)
+        min(x[x$spec %in% sppGroup & x$ecrdepth86 == 0, "crdepth86"], na.rm=T))
+    mins87 <- lapply(specs, function(sppGroup)
+        min(x[x$spec %in% sppGroup & x$ecrdepth87 == 0, "crdepth87"], na.rm=T))
+    pmin(unlist(mins86), unlist(mins87), na.rm=T)
+})
 
-cols <- grep("^crarea[0-9]|^crdepth[0-9]", names(dat))
-for (col in names(dat)[cols]) {
-    negs <- which(dat[, col] <= 0)
+for (yr in yrs) {
+    areaCol <- paste0("crarea", yr)
+    depthCol <- paste0("crdepth", yr)
+    dat[, areaCol] <- apply(dat, 1, function(x) {
+        sppGroup <- names(unlist(specs))[match(x[["spec"]], unlist(specs))]
+        sppGroup <- gsub("[0-9]", "", sppGroup)
+        aMin <- areaMins[[x[["elevcl"]]]][[sppGroup]]
+        ifelse(as.numeric(x[[areaCol]]) < aMin, aMin, as.numeric(x[[areaCol]]))
+    })
+    dat[, depthCol] <- apply(dat, 1, function(x) {
+        sppGroup <- names(unlist(specs))[match(x[["spec"]], unlist(specs))]
+        sppGroup <- gsub("[0-9]", "", sppGroup)
+        dMin <- depthMins[[x[["elevcl"]]]][[sppGroup]]
+        ifelse(as.numeric(x[[depthCol]]) < dMin, dMin, as.numeric(x[[depthCol]]))
+    })
 }
 
 ## Write data

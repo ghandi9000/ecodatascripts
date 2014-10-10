@@ -115,7 +115,16 @@ toKeep <- c("pplot","splot","tag","spec","yrmort","elev","elevcl","asp","aspcl",
             paste0("priorbv",yrs), paste0("bvgrowth",yrs), paste0("clong",yrs),
             paste0("cperp",yrs), paste0("crht",yrs))
 
-pp <- pp[,names(pp) %in% toKeep]
+pp <- pp[, names(pp) %in% toKeep]
+
+## Remove rows where aspcl/elevcl == "" and drop blank levels
+pp <- droplevels(pp[-which(pp$elevcl == "" | pp$aspcl == ""), ])
+
+## Convert all tags related to unidentified species to ""
+pp[pp$spec == "UNID", "spec"] <- ""
+pp <- droplevels(pp)
+
+## Write data
 write.csv(pp, "~/work/data/moose/moose-wide.csv", row.names = FALSE)
 
 ## cleanup
