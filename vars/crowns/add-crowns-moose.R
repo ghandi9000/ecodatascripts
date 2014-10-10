@@ -12,12 +12,16 @@
 source("~/work/ecodatascripts/vars/crowns/model/fit-models.R")
 dat <- read.csv("~/work/data/moose/moose-wide.csv")
 
-## Predict crown dimensions
+################################################################################
+##
+##                         Predict crown dimensions
+##
+################################################################################
 ## NOTE: some of these predictions will get overwritten with non-predicted values
 ##  in the next piece of code.
-yrs <- c(86, 87, 98, 10)  # years to predict for
-elevs <- c("L", "M", "H")
-specs <- list("abba" = "ABBA",
+yrs <- c(86, 87, 98, 10)                                  # years to predict for
+elevs <- c("L", "M", "H")                                 # elevations
+specs <- list("abba" = "ABBA",                            # species groupings
               "piru" = "PIRU",
               "beco" = c("BECO", "BEAL", "BEPA"))
 specs[["hard"]] <- levels(dat$spec)[!(levels(dat$spec) %in%
@@ -33,7 +37,8 @@ for (yr in yrs) {
     for (elev in elevs) {
         for (specGroup in names(specs)) {
             ## Crown area
-            rows <- dat$spec %in% specs[[specGroup]] & !is.na(dat[, ba]) & !is.na(dat[, ht])
+            rows <- dat$spec %in% specs[[specGroup]] & !is.na(dat[, ba]) &
+                !is.na(dat[, ht]) & dat$elevcl == elev
             pars <- coef(crwnAreaMods[[elev]][[specGroup]])
             dat[rows, crarea] <- pars[["a"]]*dat[rows, ba]^pars[["b"]] - pars[["c"]]*dat[rows, ht]
             ## Crown depth
@@ -57,8 +62,8 @@ dat[areaRows86, "crarea86"] <- pi * (dat[areaRows86, "cperp86"]/2) *
     (dat[areaRows86, "clong86"]/2)
 dat[areaRows87, "crarea87"] <- pi * (dat[areaRows87, "cperp87"]/2) *
     (dat[areaRows87, "clong87"]/2)
-dat[depthRows86, "crarea86"] <- dat[depthRows86, "crht86"]
-dat[depthRows87, "crarea87"] <- dat[depthRows87, "crht87"]
+dat[depthRows86, "crdepth86"] <- dat[depthRows86, "crht86"]
+dat[depthRows87, "crdepth87"] <- dat[depthRows87, "crht87"]
 
 ## Add boolean estimated columns
 for (yr in yrs) {
@@ -76,8 +81,27 @@ dat[areaRows87, "ecrarea87"] <- 0
 dat[depthRows86, "ecrdepth86"] <- 0
 dat[depthRows87, "ecrdepth87"] <- 0
 
-## Deal with negative values
-## - Set all estimated crown areas that are negative to be the minimum of observed areas
+################################################################################
+##
+##                    Deal with Negative Crown Dimensions
+##
+################################################################################
+## - Set all estimated crown areas/depths that are negative to be the minimum of
+##   observed crown areas for each combination of species group/elevation
+## NOTE: all observed areas/depths are from 86/87
+area8 <- c("crarea86", "crarea87")
+earea8 <- paste0("e", area8)
+depth8 <- c("crdepth86", "crdepth87")
+edepth8 <- paste0("e", depth8)
+mins <- lapply(specs, FUN = function(sppGroup) {
+    for (e in elevs) {
+        rows <- dat$spec %in% unlist(sppGroup) & dat$elevcl == e &
+            (dat[, earea8[1]] == 0 | dat[, earea8[2]] == 0)
+        min(dat[])
+    }
+})
+
+
 cols <- grep("^crarea[0-9]|^crdepth[0-9]", names(dat))
 for (col in names(dat)[cols]) {
     negs <- which(dat[, col] <= 0)
