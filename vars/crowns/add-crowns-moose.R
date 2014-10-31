@@ -92,8 +92,12 @@ dat[depthRows87, "ecrdepth87"] <- 0
 areaMins <- dlply(dat, .(elevcl), function(x) {
     mins86 <- lapply(specs, function(sppGroup)
         min(x[x$spec %in% sppGroup & x$ecrarea86 == 0, "crarea86"], na.rm=T))
-    mins87 <- lapply(specs, function(sppGroup)
-        min(x[x$spec %in% sppGroup & x$ecrarea87 == 0, "crarea87"], na.rm=T))
+    mins87 <- lapply(specs, function(sppGroup) {
+        if (nrow(x[x$spec %in% sppGroup & x$ecrarea87 == 0, "crarea87"]) == 0) {
+            NA } else {
+                min(x[x$spec %in% sppGroup & x$ecrarea87 == 0, "crarea87"], na.rm=T)
+            }
+    })
     pmin(unlist(mins86), unlist(mins87), na.rm=T)
 })
 

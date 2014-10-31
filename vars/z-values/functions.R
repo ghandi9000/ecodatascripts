@@ -16,6 +16,9 @@
 ##
 ################################################################################
 zvals <- function(ps, theta_S, theta_A) {
+    if (length(theta_S) == 1 & length(theta_A) == 1)
+        return ( sapply(1:nrow(ps), FUN = function(i)
+            zval(p=ps[i,], theta_S = theta_S, theta_A = theta_A) ))
     sapply(1:nrow(ps), FUN = function(i) zval(p=ps[i,], theta_S = theta_S[i], theta_A = theta_A[i]) )
 }
 
@@ -35,6 +38,7 @@ zvals <- function(ps, theta_S, theta_A) {
 zval <- function(p, theta_S, theta_A) {
     if (is.na(p[1])|| is.na(p[2]) || is.na(theta_S) || is.na(theta_A))
         return ( NA )
+    if (p[1] == 0 && p[2] == 0) return ( 0 )
     offset = 5*pi/4                                        # North offest from y-axis
     offset = offset + pi                                   # correct for slope aiming downhill
     r = sqrt(p[1]^2 + p[2]^2)                             # distance from p to origin
