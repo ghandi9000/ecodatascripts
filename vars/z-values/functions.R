@@ -24,7 +24,7 @@ zvals <- function(ps, theta_S, theta_A) {
 
 ################################################################################
 ##
-##  Compute z-values for a single point
+##  Compute z-values for a single point 
 ## - Angles are in radians
 ## - theta_S: is slope angle
 ## - theta_A: is slope aspect
