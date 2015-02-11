@@ -3,8 +3,37 @@
 ## Functions used to compute and test z-values
 ##
 ##########################################################################
-## Note: these have been replaced by using simpler rotation matrices
-## defined in functions-coordinates.R
+source("~/work/functions/functions-coordinates.R")
+
+################################################################################
+##
+##                          Using rotation matrices
+##
+################################################################################
+## ps: matrix of homogenous points (x, y, z, 1)
+## theta_s: slope angle (radians)
+## theta_a: aspect angle (radians)
+## x_offset: clockwise offset of true north from +x-axis
+zvals <- function(ps, theta_a, theta_s, x_offset = pi/4, degrees = TRUE) {
+    if (degrees) {
+        theta_a <- theta_a * pi/180
+        theta_s <- theta_s * pi/180
+    }
+    theta_a <- theta_a + x_offset - 2*pi
+    rmat <- rz(theta_a)                                                  # rotation matrix around the z-axis
+    A <- t( rmat %*% t(ps) )[, 1:2]                                  # rotated points
+    z <- A[,1] * tan(theta_s)                                            # x-value is distance down/up slope
+    z[abs(z) < 2e-13] <- 0
+    return( z )
+}
+
+## dat <- read.csv("~/work/data/moose/moose-wide.csv")
+## tst <- dat[dat$pplot == 22, ]
+## theta_a <- unique(tst$asp)
+## theta_s <- unique(tst$slope)
+## dims <- nrow(tst)
+## ps <- matrix(c(tst$x, tst$y, rep(0, dims), rep(1, dims)), ncol = 4)  # points (homogenous)
+## z <- zvals(ps, theta_a, theta_s)
 
 ################################################################################
 ##
@@ -17,12 +46,12 @@
 ##   and the vector from p through the center of the plot
 ##
 ################################################################################
-zvals <- function(ps, theta_S, theta_A) {
-    if (length(theta_S) == 1 & length(theta_A) == 1)
-        return ( sapply(1:nrow(ps), FUN = function(i)
-            zval(p=ps[i,], theta_S = theta_S, theta_A = theta_A) ))
-    sapply(1:nrow(ps), FUN = function(i) zval(p=ps[i,], theta_S = theta_S[i], theta_A = theta_A[i]) )
-}
+## zvals <- function(ps, theta_S, theta_A) {
+##     if (length(theta_S) == 1 & length(theta_A) == 1)
+##         return ( sapply(1:nrow(ps), FUN = function(i)
+##             zval(p=ps[i,], theta_S = theta_S, theta_A = theta_A) ))
+##     sapply(1:nrow(ps), FUN = function(i) zval(p=ps[i,], theta_S = theta_S[i], theta_A = theta_A[i]) )
+## }
 
 ################################################################################
 ##
