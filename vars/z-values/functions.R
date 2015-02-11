@@ -3,6 +3,8 @@
 ## Functions used to compute and test z-values
 ##
 ##########################################################################
+## Note: these have been replaced by using simpler rotation matrices
+## defined in functions-coordinates.R
 
 ################################################################################
 ##
