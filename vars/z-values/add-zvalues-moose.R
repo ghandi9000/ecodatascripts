@@ -15,7 +15,7 @@ dat <- read.csv("~/work/data/moose/moose-wide.csv")
 ################################################################################
 library(plyr)
 temp <- ddply(dat, .(pplot), function(x) {
-    x_offset <- pi/4                                                  # +x-axis is NE
+    x_offset <- 45                                               # +x-axis is NE
     theta_a <- unique(x$asp)
     theta_s <- unique(x$slope)
     dims <- nrow(x)
