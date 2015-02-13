@@ -20,7 +20,7 @@ zvals <- function(ps, theta_a, theta_s, x_offset = 45, degrees = TRUE) {
         theta_s <- theta_s * pi/180
         x_offset <- x_offset * pi/180
     }
-    theta_a <- theta_a + x_offset + pi
+    theta_a <- theta_a + x_offset
     rmat <- rz(theta_a)                                                  # rotation matrix around the z-axis
     A <- t( rmat %*% t(ps) )[, 1:2]                                  # rotated points
     z <- A[,1] * tan(theta_s)                                            # x-value is distance down/up slope
