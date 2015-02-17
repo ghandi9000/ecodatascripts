@@ -3,7 +3,7 @@
 ## Description: homogenous rotation matrices for slope, aspect things
 ## Author: Noah Peart
 ## Created: Tue Feb 10 12:21:49 2015 (-0500)
-## Last-Updated: Thu Feb 12 12:42:07 2015 (-0500)
+## Last-Updated: Mon Feb 16 15:14:03 2015 (-0500)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/z-values/functions.R")
@@ -20,7 +20,7 @@ source("~/work/functions/functions-coordinates.R")
 ## Moosilauke plot orientation: +x = NE, +y = SE
 ## Slopes are looking downhill from top of plot
 ## Since x-axis is NE, aspects degrees must add 45 degrees for offset from N
-offset <- 45 
+offset <- -45 
 
 ## Using uniform x,y
 ps <- as.matrix(expand.grid(x = -4.5:4.5, y = -4.5:4.5, z = 0, h = 1))

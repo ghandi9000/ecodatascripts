@@ -13,14 +13,14 @@ source("~/work/functions/functions-coordinates.R")
 ## ps: matrix of homogenous points (x, y, z, 1)
 ## theta_s: slope angle (radians)
 ## theta_a: aspect angle (radians)
-## x_offset: clockwise offset of true north from +x-axis
-zvals <- function(ps, theta_a, theta_s, x_offset = 45, degrees = TRUE) {
+## x_offset: counter-clockwise offset of true north from +x-axis
+zvals <- function(ps, theta_a, theta_s, x_offset = -45, degrees = TRUE) {
     if (degrees) {
         theta_a <- theta_a * pi/180
         theta_s <- theta_s * pi/180
         x_offset <- x_offset * pi/180
     }
-    theta_a <- pi + x_offset - theta_a               # aspect angle -> DOWN slope
+    theta_a <- pi - (theta_a + x_offset)             # aspect angle -> DOWN slope
     rmat <- rz(theta_a)                         # rotation matrix around the z-axis
     A <- t( rmat %*% t(ps) )[, 1:2]         # rotated points
     z <- A[,1] * tan(theta_s)                   # x-value is distance down/up slope

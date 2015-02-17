@@ -93,10 +93,10 @@ areaMins <- dlply(dat, .(elevcl), function(x) {
     mins86 <- lapply(specs, function(sppGroup)
         min(x[x$spec %in% sppGroup & x$ecrarea86 == 0, "crarea86"], na.rm=T))
     mins87 <- lapply(specs, function(sppGroup) {
-        if (nrow(x[x$spec %in% sppGroup & x$ecrarea87 == 0, "crarea87"]) == 0) {
-            NA } else {
-                min(x[x$spec %in% sppGroup & x$ecrarea87 == 0, "crarea87"], na.rm=T)
-            }
+        tst <- x[x$spec %in% sppGroup & !is.na(x$crarea87) & x$ecrarea87 == 0,]
+        if (nrow(tst) > 0)
+            min(x[x$spec %in% sppGroup & x$ecrarea87 == 0, "crarea87"], na.rm=T)
+        else NA
     })
     pmin(unlist(mins86), unlist(mins87), na.rm=T)
 })
@@ -104,8 +104,12 @@ areaMins <- dlply(dat, .(elevcl), function(x) {
 depthMins <- dlply(dat, .(elevcl), function(x) {
     mins86 <- lapply(specs, function(sppGroup)
         min(x[x$spec %in% sppGroup & x$ecrdepth86 == 0, "crdepth86"], na.rm=T))
-    mins87 <- lapply(specs, function(sppGroup)
-        min(x[x$spec %in% sppGroup & x$ecrdepth87 == 0, "crdepth87"], na.rm=T))
+    mins87 <- lapply(specs, function(sppGroup) {
+        tst <- x[x$spec %in% sppGroup & !is.na(x$crdepth87) & x$ecrdepth87 == 0,]
+        if (nrow(tst) > 0)
+            min(x[x$spec %in% sppGroup & x$ecrdepth87 == 0, "crdepth87"], na.rm=T)
+        else NA
+    })
     pmin(unlist(mins86), unlist(mins87), na.rm=T)
 })
 
