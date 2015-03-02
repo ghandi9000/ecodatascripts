@@ -6,10 +6,9 @@ pp <- read.csv("~/work/data/moose/moose-wide.csv")
 
 ## columns to transform, years to use
 yrs <- c(86, 87, 98, 10)
-cols <- c("stat","decm","dbh","bv","ba","ht","eht","cht",
-          "cpos","dbhgrowth","bagrowth","bvgrowth",
-          "htgrowth","priordbh","priorht","priorbv","priorba",
-          "crarea","ecrarea","crdepth","ecrdepth")
+cols <- c("stat","decm","dbh","ba","ht","eht","cht",
+          "cpos","dbhgrowth","bagrowth","htgrowth","priordbh","priorht",
+          "priorba", "crarea","ecrarea","crdepth","ecrdepth")
 
 ## find missing columns and make dummy columns with their names
 missing <- checkCols(pp, cols, yrs)

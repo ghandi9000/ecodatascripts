@@ -9,10 +9,7 @@
 ##
 ################################################################################
 ## Master data has crown dimensions from 86/87
-if (Sys.info()['sysname'] == "Linux") {
-    pp <- read.csv("~/Dropbox/Shared/Data/pptreemas10bv.csv")
-} else
-    pp <- read.csv("C:/Users/noah/Dropbox/Shared/Data/pptreemas10bv.csv")
+source("~/work/ecodatascripts/read/read-moose.R")
 
 ## Combine data from 86/87 for modeling.
 ## Note: some trees have measurements in both years.
