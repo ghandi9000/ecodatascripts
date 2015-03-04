@@ -3,7 +3,7 @@
 ## Description: Estimate canopy height/dbh
 ## Author: Noah Peart
 ## Created: Mon Mar  2 14:31:12 2015 (-0500)
-## Last-Updated: Tue Mar  3 18:58:31 2015 (-0500)
+## Last-Updated: Wed Mar  4 15:29:34 2015 (-0500)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -26,6 +26,9 @@ canopy_dims <- function(dat, plot=NULL, yrs=c(86, 87, 98, 10), htyrs = yrs, cpos
     })
     data.frame(t(res), time = yrs)
 }
+
+## Local canopy height
+local_canopy <- function()
 
 ## All plots canopy heights
 library(dplyr)
