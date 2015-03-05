@@ -3,10 +3,11 @@
 ## Description: Estimate canopy height/dbh
 ## Author: Noah Peart
 ## Created: Mon Mar  2 14:31:12 2015 (-0500)
-## Last-Updated: Wed Mar  4 15:29:34 2015 (-0500)
+## Last-Updated: Wed Mar  4 20:08:55 2015 (-0500)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
+require(dplyr)
 
 ## Returns estimated canopy height and dbh of canopy trees
 ## (simply the average of trees with certain crown position)
@@ -27,12 +28,8 @@ canopy_dims <- function(dat, plot=NULL, yrs=c(86, 87, 98, 10), htyrs = yrs, cpos
     data.frame(t(res), time = yrs)
 }
 
-## Local canopy height
-local_canopy <- function()
 
 ## All plots canopy heights
-library(dplyr)
-library(magrittr)
 can_dims <- pp %>% group_by(PPLOT) %>% do(canopy_dims(., canpos=c("c","d"))) %>% filter(PPLOT > 3)
 
 ## Compare to previous estimates
