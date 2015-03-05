@@ -3,7 +3,7 @@
 ## Description: Gompertz
 ## Author: Noah Peart
 ## Created: Wed Mar  4 12:52:06 2015 (-0500)
-## Last-Updated: Wed Mar  4 15:27:22 2015 (-0500)
+## Last-Updated: Thu Mar  5 00:52:04 2015 (-0500)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -35,7 +35,7 @@ gompertz <- function(ps, dbh, elev) {
 }
 
 ## MLE fit, have some saved pars, otherwise probably need to start with SANN
-ps <- readRDS("gomp_pars.rds")
+ps <- readRDS("~/work/ecodatascripts/vars/heights/gompertz/gomp_pars.rds")
 parnames(normNLL) <- c(names(ps))
 method <- "Nelder-Mead"  # start with "SANN" if bad initial guesses
 maxit <- 100000
