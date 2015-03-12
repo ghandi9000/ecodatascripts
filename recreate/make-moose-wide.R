@@ -29,5 +29,5 @@ source("~/work/ecodatascripts/vars/xy-values/add-xy-moose.R")
 source("~/work/ecodatascripts/vars/z-values/add-zvalues-moose.R")
 
 ## Add crown dimension variables (crdepth and crarea)
-source("~/work/ecodatascripts/vars/crowns/add-crowns-moose.R")
+## source("~/work/ecodatascripts/vars/crowns/add-crowns-moose.R")
 
