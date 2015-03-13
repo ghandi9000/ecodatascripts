@@ -1,0 +1,1 @@
+Didnt fit FAGR alone, only 5 trees

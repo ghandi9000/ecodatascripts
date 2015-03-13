@@ -1,0 +1,1 @@
+Using full Gompertz allometric model (elevation and canopy heights)

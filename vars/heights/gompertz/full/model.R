@@ -1,31 +1,38 @@
 ### model.R --- 
 ## Filename: model.R
-## Description: Gompertz allometric model with only elevation (no canopy)
+## Description: Gompertz allometric model (elevation and canopy as predictors)
 ## Author: Noah Peart
 ## Created: Wed Mar 11 18:09:18 2015 (-0400)
-## Last-Updated: Thu Mar 12 18:14:13 2015 (-0400)
+## Last-Updated: Thu Mar 12 19:04:45 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 library(bbmle)
 
 # log likelihood function
-normNLL <- function(params, x, dbh, elev) {
+normNLL <- function(params, x, dbh, elev, canht) {
     sd = params[["sd"]]
-    mu = do.call(gompertz, list(params, dbh, elev))
+    mu = do.call(gompertz, list(params, dbh, elev, canht))
     -sum(dnorm(x, mean = mu, sd = sd, log = TRUE))
 }
 
-## Gompertz allometry model with only elevation
-## beta = (a + b*elev) is asymptote (limit as dbh -> oo)
-## gamma = intercept (limit as dbh -> 0)
-gompertz <- function(ps, dbh, elev) {
+## Gompertz allometry model
+## beta = a + a1*elev + a2*canopy + a3*elev*canopy (limit as dbh -> oo)
+## alpha = b + b1*elev + b2*canopy + b3*elev*canopy
+## gamma = intercept (limit as dbh -> 0)  # set to DBH height = 1.37 meters
+gompertz <- function(ps, dbh, elev, canht) {
     a = ps[["a"]]
+    a1 = ps[["a1"]]
+    a2 = ps[["a2"]]        
+    a3 = ps[["a3"]]        
     b = ps[["b"]]
-    ap = ps[["ap"]]
-    bp = ps[["bp"]]
-    gamma <- 1.37
-    ## gamma = ps[["gamma"]]  # could set to 1.37?  but doesn't work quite as well
-    (a + b*elev)*exp(log(gamma/(a+b*elev))*exp(-(ap+bp*elev)*dbh))
+    b1 = ps[["b1"]]
+    b2 = ps[["b2"]]        
+    b3 = ps[["b3"]]        
+    gamma <- 1.37  # set to DBH height
+    alpha <- a + a1*elev + a2*canht + a3*elev*canht
+    beta <- b + b1*elev + b2*canht + b3*elev*canht
+
+    beta*exp( log(gamma/beta)*exp( -alpha*dbh ) )
 }
 
 ## Probably need to run once with simulated annealing to get some reasonable

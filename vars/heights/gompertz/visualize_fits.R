@@ -3,7 +3,7 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Wed Mar 11 23:00:49 2015 (-0400)
+## Last-Updated: Thu Mar 12 20:08:02 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -13,18 +13,26 @@ library(plyr)
 library(dplyr)
 
 ## Get predictions for years/species
-get_preds <- function(spec, years) {
-    spec <- toupper(spec)
+get_preds <- function(spec, years, modtype="elev") {
+    species <- unique(pp$SPEC)
+    specs <- list(maples=grep("^AC", species, value = T),           # ACSA, ACPE, ACSP
+                  hardwoods=grep("^AC|FA", species, value = T),     # maples + FAGR
+                  betula=grep("^BE", species, value = T))           # All betulas
+    base_dir <- paste0("~/work/ecodatascripts/vars/heights/gompertz/", modtype)
+    par_dir <- paste0(base_dir, "/", spec, "/")
+    keep_cols <- c("SPEC", "ELEV")
+    sppgroup <- spec
+    if (spec %in% names(specs)) sppgroup <- specs[[spec]]
     ps <- lapply(years, FUN = function(yr){
-        pars <- readRDS(paste0("~/work/ecodatascripts/vars/heights/gompertz/elev/",
-                               tolower(spec), "/", tolower(spec), "_", yr, ".rds"))
+        pars <- readRDS(paste0(par_dir, tolower(spec), "_", yr, ".rds"))
         stat <- paste0("STAT", yr)
         dbh <- paste0("DBH", yr)
         ht <- paste0("HTTCR", yr)
-        dat <- pp[pp[,"SPEC"] == spec & pp[,stat] == "ALIVE" &
+        dat <- pp[pp[,"SPEC"] %in% toupper(sppgroup) & pp[,stat] == "ALIVE" &
                       !is.na(pp[,dbh]) & !is.na(pp[,ht]), ]
         pred <- gompertz(pars, dat[,dbh], dat[,"ELEV"])
-        res <- data.frame(dbh=dat[, dbh], ht=dat[, ht], elev=dat[, "ELEV"], pred=pred)
+        res <- cbind(dat[,c(dbh, ht, keep_cols)], pred=pred)
+        names(res) <- gsub("[[:digit:]]", "", tolower(names(res)))  # don't track yrs here
         attr(res, "ps") <- pars
         attr(res, "yr") <- yr
         res
@@ -70,7 +78,7 @@ add_observed <- function(preds) {
     cols <- palette()[1:length(preds)]
     for (i in 1:length(preds)) {
         dat <- preds[[i]]
-        points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "ht"]), col=cols[i], pch = 16, pwd=2)
+        points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "httcr"]), col=cols[i], pch = 16, pwd=2)
     }
 }
 
@@ -80,8 +88,8 @@ add_observed <- function(preds) {
 ##                                 Visualize
 ##
 ################################################################################
-spec <- "PIRU"
-years <- c(86, 10)
+spec <- "BECO"
+years <- c(98, 10)
 preds <- get_preds(spec, years)
 plot_preds(preds)
 add_pred_lines(preds)

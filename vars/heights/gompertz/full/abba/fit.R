@@ -3,15 +3,13 @@
 ## Description: Fit gompertz (only elevation) to abbas
 ## Author: Noah Peart
 ## Created: Wed Mar  4 12:52:06 2015 (-0500)
-## Last-Updated: Thu Mar 12 20:30:02 2015 (-0400)
+## Last-Updated: Thu Mar 12 18:58:51 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
 source("~/work/ecodatascripts/vars/heights/gompertz/elev/model.R")
 library(dplyr)
 library(magrittr)
-
-setwd("~/work/ecodatascripts/vars/heights/gompertz/elev/abba/")
 
 ################################################################################
 ##
