@@ -1,0 +1,1 @@
+Using full Gompertz allometric model (elevation and canopy heights) fit for 1987, 1987, 1998, 2010

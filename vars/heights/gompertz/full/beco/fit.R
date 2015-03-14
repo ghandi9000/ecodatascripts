@@ -3,76 +3,43 @@
 ## Description: BECO fits
 ## Author: Noah Peart
 ## Created: Thu Mar 12 17:58:16 2015 (-0400)
-## Last-Updated: Thu Mar 12 18:55:48 2015 (-0400)
+## Last-Updated: Fri Mar 13 21:09:23 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
-source("~/work/ecodatascripts/read/read-moose.R")
-source("~/work/ecodatascripts/vars/heights/gompertz/elev/model.R")
+source("~/work/ecodatascripts/vars/heights/gompertz/full/model.R")  # model/fit functions
+source("~/work/ecodatascripts/vars/heights/canopy/load_canopy.R")   # canopy functions
 library(dplyr)
 library(magrittr)
 
-spec <- "beco"
-
 ################################################################################
 ##
-##                                   2010
+##                        NOT RUN: need better model
 ##
 ################################################################################
-beco10 <- pp %>% filter(STAT10 == "ALIVE", !is.na(DBH10), SPEC == toupper(spec),
-                        !is.na(HTTCR10)) %>%
-                            select(PPLOT, ELEVCL, ASPCL, ends_with("10"), ELEV)
-ps10 <- readRDS(paste0("./", spec, "_10.rds"))  # fit parameters
-
-################################################################################
-##
-##                                   1998
-##
-################################################################################
-## Live BECOs from 1998
-beco98 <- pp %>% filter(STAT98 == "ALIVE", !is.na(DBH98), SPEC == toupper(spec),
-                        !is.na(HTTCR98)) %>%
-                            select(PPLOT, ELEVCL, ASPCL, ends_with("98"), ELEV)
-ps98 <- readRDS(paste0("./", spec, "_98.rds"))
-
-################################################################################
-##
-##                                   1986
-##
-################################################################################
-## Use heights measured in 87 for 86 dbhs?
-beco86 <- pp %>% filter(STAT86 == "ALIVE", !is.na(DBH86), SPEC == toupper(spec),
-                        !is.na(HTTCR86)) %>%
-                            select(PPLOT, ELEVCL, ASPCL, ends_with("86"), ELEV)
-ps86 <- readRDS("./beco_86.rds")
-
-################################################################################
-##
-##                                   1987
-##
-################################################################################
-## No height measurements
-## beco87 <- pp %>% filter(STAT87 == "ALIVE", !is.na(DBH87), toupper(spec),
-##                         !is.na(HTTCR87)) %>%
-##                             select(PPLOT, ELEVCL, ASPCL, ends_with("87"), ELEV)
 
 ################################################################################
 ##
 ##                                 Run fits
 ##
 ################################################################################
+## Only 3 trees from 87
+base_dir <- "~/work/ecodatascripts/vars/heights/gompertz/full/beco/"
 yrs <- c(86, 98, 10)
+spec <- c("beco")
+can_func <- "can_hts"  # canopy functions defined in canopy directory
+
 for (yr in yrs) {
-    dat <- get(paste0("beco",yr))
-    ps <- get(paste0("ps",yr))
+    dat <- prep_data(dat=pp, yr=yr, spec=spec, can_func=can_func)
+    ps <- readRDS(paste0(base_dir, "beco_", yr, ".rds"))
     ps$gamma <- NULL  # decided to kill intercept param
 
     method <- "SANN" # "Nelder-Mead"
     maxit <- 1e6
 
-    summary(fit <- run_fit(dat, ps, yr, method=method, maxit=maxit))
-    summary(fit2 <- run_fit(dat, as.list(coef(fit)), yr))
+    summary(fit <- run_fit(dat, ps, yr, method=method, maxit=maxit))  # SANN first
+    summary(fit2 <- run_fit(dat, as.list(coef(fit)), yr))             # the Nelder-Mead
 
     ## save parameters
     ps <- as.list(coef(fit2))
-    saveRDS(ps, file=paste0("~/work/ecodatascripts/vars/heights/gompertz/elev/beco/beco_", yr, ".rds"))
+    saveRDS(ps, file=paste0(base_dir, "beco_", yr, ".rds"))
 }

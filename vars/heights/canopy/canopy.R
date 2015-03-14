@@ -3,7 +3,7 @@
 ## Description: Estimate canopy height/dbh
 ## Author: Noah Peart
 ## Created: Mon Mar  2 14:31:12 2015 (-0500)
-## Last-Updated: Wed Mar  4 20:08:55 2015 (-0500)
+## Last-Updated: Fri Mar 13 18:37:29 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -22,15 +22,28 @@ canopy_dims <- function(dat, plot=NULL, yrs=c(86, 87, 98, 10), htyrs = yrs, cpos
         inds <- (dat[[paste0(cols$stat, yrs[i])]] == "ALIVE") &
             (!is.na(dat[[paste0(cols$ht, htyrs[i])]])) &
                 (dat[[paste0(cols$cpos, cposyrs[i])]] %in% canpos)
-        c(ht = mean(dat[inds,][[paste0(cols$ht, htyrs[i])]]),   # canopy height
-          dbh = mean(dat[inds,][[paste0(cols$dbh, yrs[i])]]))   # canopy dbh
+        c(ht_mean = mean(dat[inds,][[paste0(cols$ht, htyrs[i])]]),    # canopy height mean
+          ht_med = median(dat[inds,][[paste0(cols$ht, htyrs[i])]]),   # canopy height median
+          ht_dev = sd(dat[inds,][[paste0(cols$ht, htyrs[i])]]),       # canopy height sd
+          dbh_mean= mean(dat[inds,][[paste0(cols$dbh, yrs[i])]]),     # canopy dbh mean 
+          dbh_med = median(dat[inds,][[paste0(cols$dbh, yrs[i])]]),   # canopy dbh median
+          dbh_dev = sd(dat[inds,][[paste0(cols$dbh, yrs[i])]]),       # canopy dbh sd
+          cod = sum(dat[inds,][[paste0(cols$cpos, cposyrs[i])]] == "c"),
+          dom = sum(dat[inds,][[paste0(cols$cpos, cposyrs[i])]] == "d"),
+          count = nrow(dat[inds,]))
     })
     data.frame(t(res), time = yrs)
 }
 
+## Run on pplot and splot/pplot
+can_splot <- pp %>% filter(PPLOT > 3 & !is.na(SPLOT)) %>% group_by(PPLOT, SPLOT) %>%
+    do(canopy_dims(., canpos=c("c","d")))
+can_plot <- pp %>% filter(PPLOT > 3) %>% group_by(PPLOT) %>%
+    do(canopy_dims(., canpos=c("c","d")))
 
-## All plots canopy heights
-can_dims <- pp %>% group_by(PPLOT) %>% do(canopy_dims(., canpos=c("c","d"))) %>% filter(PPLOT > 3)
+## Save data
+## write.csv(can_splot, "~/work/ecodatascripts/vars/heights/canopy/can_splot.csv", row.names=F)
+## write.csv(can_plot, "~/work/ecodatascripts/vars/heights/canopy/can_plot.csv", row.names=F)
 
 ## Compare to previous estimates
 ## prev <- distinct(pp, cht8687, cht98, CHT10) %>% select(PPLOT, cht8687, cht98, CHT10) %>%
