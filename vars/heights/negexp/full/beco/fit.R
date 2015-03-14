@@ -1,12 +1,12 @@
 ### fit.R --- 
 ## Filename: fit.R
-## Description: BECO fits
+## Description: 
 ## Author: Noah Peart
-## Created: Thu Mar 12 17:58:16 2015 (-0400)
-## Last-Updated: Fri Mar 13 21:51:20 2015 (-0400)
+## Created: Fri Mar 13 23:35:42 2015 (-0400)
+## Last-Updated: Sat Mar 14 13:23:37 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
-source("~/work/ecodatascripts/vars/heights/gompertz/full/model.R")  # model/fit functions
+source("~/work/ecodatascripts/vars/heights/negexp/full/model.R")    # model/fit functions
 source("~/work/ecodatascripts/vars/heights/prep.R")                 # data prep
 source("~/work/ecodatascripts/vars/heights/canopy/load_canopy.R")   # canopy functions
 library(dplyr)
@@ -14,17 +14,12 @@ library(magrittr)
 
 ################################################################################
 ##
-##                        NOTE: need better model
-##
-################################################################################
-
-################################################################################
-##
 ##                                 Run fits
 ##
 ################################################################################
-base_dir <- "~/work/ecodatascripts/vars/heights/gompertz/full/beco/"
-yrs <- c(86, 98, 10)
+## Can only fit for 98 and 10
+base_dir <- "~/work/ecodatascripts/vars/heights/negexp/full/beco/"
+yrs <- c(98, 10)
 spec <- c("beco")
 can_func <- "can_hts"  # canopy functions defined in canopy directory
 
@@ -43,3 +38,4 @@ for (yr in yrs) {
     ps <- as.list(coef(fit2))
     saveRDS(ps, file=paste0(base_dir, "beco_", yr, ".rds"))
 }
+

@@ -1,0 +1,1 @@
+Negative exponential with only elevation, no canopy heights
