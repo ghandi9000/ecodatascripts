@@ -3,7 +3,7 @@
 ## Description: BECO fits
 ## Author: Noah Peart
 ## Created: Thu Mar 12 17:58:16 2015 (-0400)
-## Last-Updated: Fri Mar 13 21:09:23 2015 (-0400)
+## Last-Updated: Fri Mar 13 21:51:20 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/heights/gompertz/full/model.R")  # model/fit functions
@@ -13,7 +13,7 @@ library(magrittr)
 
 ################################################################################
 ##
-##                        NOT RUN: need better model
+##                        NOTE: need better model
 ##
 ################################################################################
 
@@ -22,7 +22,6 @@ library(magrittr)
 ##                                 Run fits
 ##
 ################################################################################
-## Only 3 trees from 87
 base_dir <- "~/work/ecodatascripts/vars/heights/gompertz/full/beco/"
 yrs <- c(86, 98, 10)
 spec <- c("beco")

@@ -3,7 +3,7 @@
 ## Description: All betula spp together
 ## Author: Noah Peart
 ## Created: Thu Mar 12 18:15:54 2015 (-0400)
-## Last-Updated: Fri Mar 13 21:10:31 2015 (-0400)
+## Last-Updated: Fri Mar 13 22:09:16 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/heights/gompertz/full/model.R")  # model/fit functions
@@ -13,7 +13,7 @@ library(magrittr)
 
 ################################################################################
 ##
-##                        NOT RUN: need better model
+##                        NOTE: need better model
 ##
 ################################################################################
 
@@ -23,14 +23,14 @@ library(magrittr)
 ##
 ################################################################################
 ## Only 3 trees from 87
-base_dir <- "~/work/ecodatascripts/vars/heights/gompertz/full/beco/"
+base_dir <- "~/work/ecodatascripts/vars/heights/gompertz/full/betula/"
 yrs <- c(86, 98, 10)
 spec <- c("beco", "beal", "bepa")
 can_func <- "can_hts"  # canopy functions defined in canopy directory
 
 for (yr in yrs) {
     dat <- prep_data(dat=pp, yr=yr, spec=spec, can_func=can_func)
-    ps <- readRDS(paste0(base_dir, "beco_", yr, ".rds"))
+    ps <- readRDS(paste0(base_dir, "betula_", yr, ".rds"))
     ps$gamma <- NULL  # decided to kill intercept param
 
     method <- "SANN" # "Nelder-Mead"
@@ -41,5 +41,5 @@ for (yr in yrs) {
 
     ## save parameters
     ps <- as.list(coef(fit2))
-    saveRDS(ps, file=paste0(base_dir, "beco_", yr, ".rds"))
+    saveRDS(ps, file=paste0(base_dir, "betula_", yr, ".rds"))
 }
