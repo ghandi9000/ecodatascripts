@@ -3,7 +3,7 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Sat Mar 14 14:03:02 2015 (-0400)
+## Last-Updated: Sun Mar 15 00:47:44 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -36,6 +36,8 @@ get_preds <- function(spec, years, modtype="negexp", inds="full") {
         names(res) <- gsub("[[:digit:]]", "", tolower(names(res)))  # don't track yrs here
         attr(res, "ps") <- pars
         attr(res, "yr") <- yr
+        attr(res, "mod") <- modtype
+        attr(res, "inds") <- inds
         res
     })
     names(ps) <- lapply(years, FUN=function(yr) paste0(spec, yr))
@@ -64,10 +66,11 @@ add_pred_lines <- function(preds) {
     cols <- palette()[1:length(preds)]
     for (i in 1:length(preds)) {
         dat <- preds[[i]]
+        mod <- as.name(attr(dat, "mod"))
         ps <- attr(dat, "ps")
         x <- seq(0, max(dat[,"dbh"]), length=50) # min(dat[,"dbh"])
         y <- unique(dat[,"elev"])
-        z <- outer(x, y, gompertz, ps=ps)
+        z <- outer(x, y, mod, ps=ps)
         for (j in 1:ncol(z)) {
             lines3d(xyz.coords(x, rep(y[j], length(x)), z = z[,j]), col=cols[i], lwd=2)
         }
@@ -83,14 +86,14 @@ add_observed <- function(preds) {
     }
 }
 
-
+points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "httcr"]), col="red", pch = 16, pwd=2)
 ################################################################################
 ##
 ##                                 Visualize
 ##
 ################################################################################
 spec <- "BECO"
-years <- c(98, 10)
+years <- c(98)
 preds <- get_preds(spec, years)
 plot_preds(preds)
 add_pred_lines(preds)
