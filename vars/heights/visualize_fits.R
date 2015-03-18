@@ -3,13 +3,14 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Sun Mar 15 00:47:44 2015 (-0400)
+## Last-Updated: Tue Mar 17 23:22:00 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
 source("~/work/ecodatascripts/vars/heights/prep.R")  # preps data, adds canhts
 ## source("~/work/ecodatascripts/vars/heights/gompertz/elev/model.R")
-source("~/work/ecodatascripts/vars/heights/negexp/full/model.R")
+## source("~/work/ecodatascripts/vars/heights/negexp/full/model.R")
+source("~/work/ecodatascripts/vars/heights/negexp/elev/model.R")
 library(rgl)
 library(plyr)
 library(dplyr)
@@ -31,7 +32,10 @@ get_preds <- function(spec, years, modtype="negexp", inds="full") {
         dbh <- paste0("DBH", yr)
         ht <- paste0("HTTCR", yr)
         dat <- prep_data(pp, yr=yr, spec=toupper(sppgroup))
-        pred <- do.call(modtype, list(pars, dat[,dbh], dat[,"ELEV"], dat[,"canht"]))
+        if (inds == "full")
+            pred <- do.call(modtype, list(pars, dat[,dbh], dat[,"ELEV"], dat[,"canht"]))
+        else
+            pred <- do.call(modtype, list(pars, dat[,dbh], dat[,"ELEV"]))
         res <- cbind(dat[,c(dbh, ht, keep_cols)], pred=pred)
         names(res) <- gsub("[[:digit:]]", "", tolower(names(res)))  # don't track yrs here
         attr(res, "ps") <- pars
@@ -49,9 +53,11 @@ plot_preds <- function(preds) {
     require(rgl)
     dat <- preds[[1]]
     cols <- palette()[1:length(preds)]
+    modtype <- attr(dat, "mod")  # model type used
+    inds <- attr(dat, "inds")  # independent vars
     plot3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "pred"]),
            xlab = "DBH", ylab = "Elevation", zlab = "Height", col=cols[1],
-           main = paste0("Gompertz allometric model predictions (Elevation only) for ", spec))
+           main = paste0(modtype, " allometric model predictions (,", inds, ") for ", spec))
     if (length(preds) > 1) {
         for (i in 2:length(preds)) {
             dat <- preds[[i]]
@@ -77,27 +83,29 @@ add_pred_lines <- function(preds) {
     }
 }
 
-add_observed <- function(preds) {
+add_observed <- function(preds, col=NULL) {
     require(rgl)
-    cols <- palette()[1:length(preds)]
+    if(!missing(col)) 
+        cols <- palette()[1:length(preds)]
     for (i in 1:length(preds)) {
         dat <- preds[[i]]
         points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "httcr"]), col=cols[i], pch = 16, pwd=2)
     }
 }
 
+dat <- preds[[1]]
 points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "httcr"]), col="red", pch = 16, pwd=2)
 ################################################################################
 ##
 ##                                 Visualize
 ##
 ################################################################################
-spec <- "BECO"
+spec <- "hardwoods"
 years <- c(98)
-preds <- get_preds(spec, years)
+preds <- get_preds(spec, years, modtype = "gompertz", inds = "full")
 plot_preds(preds)
 add_pred_lines(preds)
-add_observed(preds)
+add_observed(preds, col = "red")
 
 
 ## residuals

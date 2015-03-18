@@ -3,7 +3,7 @@
 ## Description: Negative exponential allometric model elevation and canopy
 ## Author: Noah Peart
 ## Created: Wed Mar 11 18:09:18 2015 (-0400)
-## Last-Updated: Fri Mar 13 23:34:37 2015 (-0400)
+## Last-Updated: Tue Mar 17 22:21:18 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 library(bbmle)
@@ -15,10 +15,10 @@ normNLL <- function(params, x, dbh, elev, canht) {
     -sum(dnorm(x, mean = mu, sd = sd, log = TRUE))
 }
 
-## Negative exponentil allometry model with only elevation
+## Negative exponential allometry model with only elevation
 ## H = gamma + (beta - gamma)(1 - e^(-alpha*D))
-## beta = (a + b*elev) is asymptote (limit as dbh -> oo)
-## alpha = (ap + bp*elev)
+## beta <- b + b1*elev + b2*canht + b3*elev*canht
+## alpha = a + a1*elev + a2*canht + a3*elev*canht
 ## gamma = intercept (limit as dbh -> 0)
 negexp <- function(ps, dbh, elev, canht) {
     a = ps[["a"]]
