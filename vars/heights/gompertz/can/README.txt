@@ -1,0 +1,1 @@
+Using Gompertz allometric model with only canopy heights (for HH transects)

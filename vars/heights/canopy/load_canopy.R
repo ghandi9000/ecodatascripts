@@ -3,13 +3,13 @@
 ## Description: Load canopy variables
 ## Author: Noah Peart
 ## Created: Fri Mar 13 16:59:40 2015 (-0400)
-## Last-Updated: Fri Mar 13 21:16:34 2015 (-0400)
+## Last-Updated: Thu Mar 19 17:24:28 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
-
-## Canopy dimensions
+## Canopy dimensions (permanent plots)
 can_splot <- read.csv("~/work/ecodatascripts/vars/heights/canopy/can_splot.csv")
 can_plot <- read.csv("~/work/ecodatascripts/vars/heights/canopy/can_plot.csv")
+hh_plot <- read.csv("~/work/ecodatascripts/vars/heights/canopy/hh_plot.csv")
 
 ## Function to retrieve canopy height for a subplot/pplot (interactive)
 ## Uses canopy height measure from subplot if possible, otherwise
@@ -37,3 +37,10 @@ mfunc <- function(val) return(val)  # can be altered for more advanced measurmen
 can_local <- function(plot, targ, yr, measure="mfunc") {
 ##     inds <- with(plot, plot[targ$TAG != TAG & ]
 }
+
+## use tallest 5 trees for hh transect canopy estimates
+can_hh <- function(row, yr, measure="ht_mean") {
+    res <- with(hh_plot, hh_plot[time==yr & TPLOT==as.numeric(row[["TPLOT"]]), measure])
+    return( res )
+}
+

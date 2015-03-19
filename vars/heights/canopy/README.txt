@@ -1,1 +1,1 @@
-Canopy heights/DBH estimates
+Canopy heights/DBH estimates for permanent plots/hh transect plots

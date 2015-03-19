@@ -1,0 +1,1 @@
+Negative exponential type model for allometric fits

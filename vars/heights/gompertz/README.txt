@@ -1,0 +1,1 @@
+Various takes on the Gompertz allometric model with only elevation/canopy height as predictors
