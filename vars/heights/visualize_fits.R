@@ -3,45 +3,67 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Tue Mar 17 23:22:00 2015 (-0400)
+## Last-Updated: Fri Mar 20 12:39:40 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
+source("~/work/ecodatascripts/read/read-transect.R")
 source("~/work/ecodatascripts/vars/heights/prep.R")  # preps data, adds canhts
+
+## Gompertz models
 ## source("~/work/ecodatascripts/vars/heights/gompertz/elev/model.R")
+## source("~/work/ecodatascripts/vars/heights/gompertz/full/model.R")
+## Neg-exp models
 ## source("~/work/ecodatascripts/vars/heights/negexp/full/model.R")
-source("~/work/ecodatascripts/vars/heights/negexp/elev/model.R")
+## source("~/work/ecodatascripts/vars/heights/negexp/elev/model.R")
+
 library(rgl)
 library(plyr)
 library(dplyr)
 
 ## Get predictions for years/species
-get_preds <- function(spec, years, modtype="negexp", inds="full") {
+## spec: must match individual species or species grouping that was fit
+get_preds <- function(spec, years, modtype="gompertz", inds="full", hh=FALSE,
+                      cols = list(stat="STAT", ht="HTTCR", dbh="DBH", canht="canht")) {
     species <- unique(pp$SPEC)
     specs <- list(maples=grep("^AC", species, value = T),           # ACSA, ACPE, ACSP
                   hardwoods=grep("^AC|FA", species, value = T),     # maples + FAGR
                   betula=grep("^BE", species, value = T))           # All betulas
     base_dir <- paste0("~/work/ecodatascripts/vars/heights/", modtype, "/", inds, "/")
-    par_dir <- paste0(base_dir, "/", spec, "/")
+    source(paste0(base_dir, "model.R"))  # load the model
+    par_dir <- paste0(base_dir, "/", tolower(spec), "/")
     keep_cols <- c("SPEC", "ELEV", "canht")
     sppgroup <- spec
+    dat <- pp
+    if(hh) dat <- tp  # use transect data for HH
     if (spec %in% names(specs)) sppgroup <- specs[[spec]]
     ps <- lapply(years, FUN = function(yr){
         pars <- readRDS(paste0(par_dir, tolower(spec), "_", yr, ".rds"))
-        stat <- paste0("STAT", yr)
-        dbh <- paste0("DBH", yr)
-        ht <- paste0("HTTCR", yr)
-        dat <- prep_data(pp, yr=yr, spec=toupper(sppgroup))
-        if (inds == "full")
-            pred <- do.call(modtype, list(pars, dat[,dbh], dat[,"ELEV"], dat[,"canht"]))
-        else
-            pred <- do.call(modtype, list(pars, dat[,dbh], dat[,"ELEV"]))
-        res <- cbind(dat[,c(dbh, ht, keep_cols)], pred=pred)
+        stat <- paste0(cols$stat, yr)
+        dbh <- paste0(cols$dbh, yr)
+        ht <- paste0(cols$ht, yr)
+
+        ## Prep data
+        if (hh) dd <- prep_hh(dat, yr=yr, spec=toupper(sppgroup))
+        else dd <- prep_data(dat, yr=yr, spec=toupper(sppgroup))
+
+        ## Get predictions
+        if (inds == "full") pred <- {
+            do.call(modtype, list(pars, dd[,dbh], dd[,"ELEV"], dd[,"canht"]))
+        } else if (inds == "elev") {
+            pred <- do.call(modtype, list(pars, dd[,dbh], dd[,"ELEV"]))
+        } else {
+            pred <- do.call(modtype, list(pars, dd[,dbh], dd[,"canht"]))
+        }
+        
+        res <- cbind(dd[,c(dbh, ht, keep_cols)], pred=pred)
         names(res) <- gsub("[[:digit:]]", "", tolower(names(res)))  # don't track yrs here
         attr(res, "ps") <- pars
         attr(res, "yr") <- yr
         attr(res, "mod") <- modtype
         attr(res, "inds") <- inds
+        attr(res, "spec") <- spec
+        attr(res, "hh") <- hh
         res
     })
     names(ps) <- lapply(years, FUN=function(yr) paste0(spec, yr))
@@ -55,6 +77,7 @@ plot_preds <- function(preds) {
     cols <- palette()[1:length(preds)]
     modtype <- attr(dat, "mod")  # model type used
     inds <- attr(dat, "inds")  # independent vars
+    spec <- attr(dat, "spec")
     plot3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "pred"]),
            xlab = "DBH", ylab = "Elevation", zlab = "Height", col=cols[1],
            main = paste0(modtype, " allometric model predictions (,", inds, ") for ", spec))
@@ -71,11 +94,15 @@ plot_preds <- function(preds) {
 add_pred_lines <- function(preds) {
     cols <- palette()[1:length(preds)]
     for (i in 1:length(preds)) {
+        hh <- attr(dat, "hh")
         dat <- preds[[i]]
-        mod <- as.name(attr(dat, "mod"))
+        mod <- get(attr(dat, "mod"))
         ps <- attr(dat, "ps")
         x <- seq(0, max(dat[,"dbh"]), length=50) # min(dat[,"dbh"])
-        y <- unique(dat[,"elev"])
+        elevs <- unique(dat[,"elev"])
+        if (hh) {
+            chts <- unique(dat[,"canht"])
+            z <- outer(x, )
         z <- outer(x, y, mod, ps=ps)
         for (j in 1:ncol(z)) {
             lines3d(xyz.coords(x, rep(y[j], length(x)), z = z[,j]), col=cols[i], lwd=2)
