@@ -3,7 +3,7 @@
 ## Description: Make working datasets with variables for fitting
 ## Author: Noah Peart
 ## Created: Fri Mar 13 17:12:40 2015 (-0400)
-## Last-Updated: Thu Mar 19 17:25:58 2015 (-0400)
+## Last-Updated: Fri Mar 20 13:32:28 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")

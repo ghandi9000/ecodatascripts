@@ -3,7 +3,7 @@
 ## Description: Add the extra BECO data for fits
 ## Author: Noah Peart
 ## Created: Tue Mar 17 20:06:51 2015 (-0400)
-## Last-Updated: Tue Mar 17 23:05:33 2015 (-0400)
+## Last-Updated: Fri Mar 20 15:01:14 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/heights/prep.R")
@@ -29,10 +29,10 @@ compare_beco_data <- function() {
         ggtitle(label = "BECO data from 1998")
 }
 
-join_extra_beco <- function(dat, becos98) {
-    dat98 <- prep_data(pp, 98, "beco")
-    dat98 <- dat98 %>% select(HT=HTTCR98, DBH = DBH98, ELEVCL, ELEV) %>% mutate(TYPE=0)
-    becos98 <- becos98 %>% mutate(TYPE=1)
+join_extra_beco <- function(dat, becos98, spp="beco") {
+    dat98 <- prep_data(pp, 98, spec=spp)
+    dat98 <- dat98 %>% select(HTTCR98, DBH98, ELEVCL, ELEV) %>% mutate(TYPE=0)
+    becos98 <- becos98 %>% mutate(TYPE=1) %>% dplyr::rename(HTTCR98=HT, DBH98=DBH)
     both <- rbind(dat98, becos98)
     return( both )
 }

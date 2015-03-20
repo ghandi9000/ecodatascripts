@@ -3,7 +3,7 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Fri Mar 20 12:39:40 2015 (-0400)
+## Last-Updated: Fri Mar 20 15:44:11 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -35,7 +35,10 @@ get_preds <- function(spec, years, modtype="gompertz", inds="full", hh=FALSE,
     keep_cols <- c("SPEC", "ELEV", "canht")
     sppgroup <- spec
     dat <- pp
-    if(hh) dat <- tp  # use transect data for HH
+    if(hh) {
+        dat <- tp  # use transect data for HH
+        cols$ht = "HT"
+    }
     if (spec %in% names(specs)) sppgroup <- specs[[spec]]
     ps <- lapply(years, FUN = function(yr){
         pars <- readRDS(paste0(par_dir, tolower(spec), "_", yr, ".rds"))
@@ -60,10 +63,12 @@ get_preds <- function(spec, years, modtype="gompertz", inds="full", hh=FALSE,
         names(res) <- gsub("[[:digit:]]", "", tolower(names(res)))  # don't track yrs here
         attr(res, "ps") <- pars
         attr(res, "yr") <- yr
-        attr(res, "mod") <- modtype
+        attr(res, "mod") <- get(modtype)
+        attr(res, "modname") <- modtype
         attr(res, "inds") <- inds
         attr(res, "spec") <- spec
         attr(res, "hh") <- hh
+        attr(res, "cols") <- cols
         res
     })
     names(ps) <- lapply(years, FUN=function(yr) paste0(spec, yr))
@@ -75,10 +80,10 @@ plot_preds <- function(preds) {
     require(rgl)
     dat <- preds[[1]]
     cols <- palette()[1:length(preds)]
-    modtype <- attr(dat, "mod")  # model type used
+    modtype <- attr(dat, "modname")  # model type used
     inds <- attr(dat, "inds")  # independent vars
     spec <- attr(dat, "spec")
-    plot3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "pred"]),
+    plot3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "pred"]), alpha = 0.2,
            xlab = "DBH", ylab = "Elevation", zlab = "Height", col=cols[1],
            main = paste0(modtype, " allometric model predictions (,", inds, ") for ", spec))
     if (length(preds) > 1) {
@@ -94,45 +99,65 @@ plot_preds <- function(preds) {
 add_pred_lines <- function(preds) {
     cols <- palette()[1:length(preds)]
     for (i in 1:length(preds)) {
-        hh <- attr(dat, "hh")
         dat <- preds[[i]]
-        mod <- get(attr(dat, "mod"))
+        hh <- attr(dat, "hh")
+        inds <- attr(dat, "inds")
+        mod <- attr(dat, "mod")
         ps <- attr(dat, "ps")
         x <- seq(0, max(dat[,"dbh"]), length=50) # min(dat[,"dbh"])
         elevs <- unique(dat[,"elev"])
-        if (hh) {
-            chts <- unique(dat[,"canht"])
-            z <- outer(x, )
-        z <- outer(x, y, mod, ps=ps)
+
+        if (hh || inds == "full") {
+            combos <- dat %>% select(elev, canht) %>% distinct(elev, canht) %>%
+                arrange(elev)
+            chts <- combos[["canht"]]
+            elevs <- combos[["elev"]]
+            if (hh) z <- outer(x, chts, mod, ps=ps)
+            else z <- outer(x, elevs, mod, ps=ps,
+                            canht=rep(chts, each=length(x)))
+        } else {
+            z <- outer(x, elevs, mod, ps=ps)
+        }
         for (j in 1:ncol(z)) {
-            lines3d(xyz.coords(x, rep(y[j], length(x)), z = z[,j]), col=cols[i], lwd=2)
+            lines3d(xyz.coords(x, rep(elevs[j], length(x)), z = z[,j]),
+                    col=cols[i], lwd=2, alpha = 0.2)
         }
     }
 }
 
 add_observed <- function(preds, col=NULL) {
     require(rgl)
-    if(!missing(col)) 
-        cols <- palette()[1:length(preds)]
+    colors <- palette()[1:length(preds)]
+    if(!missing(col))
+        colors <- col
+
     for (i in 1:length(preds)) {
         dat <- preds[[i]]
-        points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "httcr"]), col=cols[i], pch = 16, pwd=2)
+        hh <- attr(dat, "hh")
+        if (hh) {
+            points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "ht"]),
+                     col=colors[i], pch = 16, pwd=2)
+        } else {
+            points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "httcr"]),
+                     col=colors[i], pch = 16, pwd=2)
+        }
     }
 }
 
-dat <- preds[[1]]
-points3d(xyz.coords(dat[, "dbh"], dat[, "elev"], dat[, "httcr"]), col="red", pch = 16, pwd=2)
 ################################################################################
 ##
 ##                                 Visualize
 ##
 ################################################################################
-spec <- "hardwoods"
+spec <- "beco"
+model <- "gompertz"
+inds <- "elev"
+hh <- FALSE
 years <- c(98)
-preds <- get_preds(spec, years, modtype = "gompertz", inds = "full")
+preds <- get_preds(spec, years, modtype = model, inds = inds)
 plot_preds(preds)
 add_pred_lines(preds)
-add_observed(preds, col = "red")
+add_observed(preds)
 
 
 ## residuals
