@@ -3,7 +3,7 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Fri Mar 20 15:44:11 2015 (-0400)
+## Last-Updated: Mon Mar 23 16:12:32 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -150,10 +150,10 @@ add_observed <- function(preds, col=NULL) {
 ##
 ################################################################################
 spec <- "beco"
-model <- "gompertz"
-inds <- "elev"
+model <- "negexp"
+inds <- "full"
 hh <- FALSE
-years <- c(98)
+years <- c(98, 10)
 preds <- get_preds(spec, years, modtype = model, inds = inds)
 plot_preds(preds)
 add_pred_lines(preds)

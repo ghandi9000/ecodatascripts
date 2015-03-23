@@ -17,7 +17,7 @@ Years: 86, 87, 98, 10
 Model: Gompertz(canopy, elevation), "./gompertz/full/piru"
 
 Species: SOAM
-years: 98, 10
+years: 10 (there is some data for 2010, but couldn't get good fit)
 Model: Gompertz(canopy, elevation), "./gompertz/full/soam"
 
 Species: ACSA, ACSP, ACPE (maples)
