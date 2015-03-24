@@ -3,7 +3,7 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Mon Mar 23 16:12:32 2015 (-0400)
+## Last-Updated: Mon Mar 23 22:31:01 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -149,22 +149,29 @@ add_observed <- function(preds, col=NULL) {
 ##                                 Visualize
 ##
 ################################################################################
-spec <- "beco"
-model <- "negexp"
+spec <- "abba"
+model <- "gompertz"
 inds <- "full"
 hh <- FALSE
-years <- c(98, 10)
-preds <- get_preds(spec, years, modtype = model, inds = inds)
+years <- c(10)
+preds <- get_preds(spec, years, modtype = model, inds = inds, hh=hh)
 plot_preds(preds)
 add_pred_lines(preds)
 add_observed(preds)
 
+dat <- preds[[1]]
+library(ggplot2)
+dat <- pp[pp$SPEC %in% c("PRPE", "SOAM") & pp$STAT86 == "ALIVE", ]
+plot(dat$DBH86, dat$HTTCR86, col = dat$SPEC)
+ggplot(dat, aes(dbh, ht)) + geom_point(alpha=0.5) + facet_wrap(~canht) +
+    geom_line(aes(dbh, pred))
+
 
 ## residuals
-dat <- abba98
-resids <- dat$httcr98 - preds
-plot3d(xyz.coords(dat$dbh98, dat$elev, resids),
-       xlab = "dbh98", ylab = "elev", zlab = "residuals",
+dat <- preds[[1]]
+resids <- dat$httcr - dat$pred
+plot3d(xyz.coords(dat$dbh, dat$elev, resids),
+       xlab = "dbh", ylab = "elev", zlab = "residuals",
        main = "Gompertz allometric model residuals")
 planes3d(c(0,0,1), alpha = 0.2, col = "red")
 

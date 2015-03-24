@@ -3,7 +3,7 @@
 ## Description: Estimate canopy height/dbh
 ## Author: Noah Peart
 ## Created: Mon Mar  2 14:31:12 2015 (-0500)
-## Last-Updated: Thu Mar 19 17:19:23 2015 (-0400)
+## Last-Updated: Mon Mar 23 22:09:46 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -60,7 +60,7 @@ can_plot <- pp %>% filter(PPLOT > 3) %>% group_by(PPLOT) %>%
     do(canopy_dims(., canpos=c("c","d")))
 
 ## Run on hh transect plots (tallest 5 trees)
-can_hh <- tp %>% filter(ELEVCL == "HH") %>% group_by(TPLOT) %>%
+can_hh <- tp %>% filter(ELEVCL == "HH") %>% group_by(TPLOT, TRAN) %>%
     do(canopy_tall_x(., num_trees=5))
 
 ## Save data
