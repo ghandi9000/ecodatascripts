@@ -3,7 +3,7 @@
 ## Description: Make working datasets with variables for fitting
 ## Author: Noah Peart
 ## Created: Fri Mar 13 17:12:40 2015 (-0400)
-## Last-Updated: Fri Mar 20 13:32:28 2015 (-0400)
+## Last-Updated: Tue Mar 24 10:51:32 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -46,8 +46,10 @@ prep_hh <- function(dat, yr, spec, can_func="can_hh") {
     is_alive <- interp(~stat == "ALIVE", stat=as.name(stat))
     has_dbh <- interp(~!is.na(dbh), dbh=as.name(dbh))
     has_ht <- interp(~!is.na(ht), ht=as.name(ht))
+
+    ## Not using south transect for fits, or E335
     res <- dat %>% filter_(~ELEVCL == "HH", is_alive, has_dbh, has_ht,
-                           ~SPEC %in% toupper(spec))
+                           ~SPEC %in% toupper(spec), ~TRAN)
 
     ## Canopy (defined by can_func)
     res$canht <- apply(res, 1, function(x) do.call(can_func, list(row=x, yr=yr)))

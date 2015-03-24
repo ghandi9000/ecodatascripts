@@ -3,7 +3,7 @@
 ## Description: Load canopy variables
 ## Author: Noah Peart
 ## Created: Fri Mar 13 16:59:40 2015 (-0400)
-## Last-Updated: Thu Mar 19 17:24:28 2015 (-0400)
+## Last-Updated: Tue Mar 24 10:46:54 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 ## Canopy dimensions (permanent plots)
@@ -33,10 +33,10 @@ can_hts <- function(row, yr, measure="ht_mean") {
 }
 
 ## Local canopy heights
-mfunc <- function(val) return(val)  # can be altered for more advanced measurments
-can_local <- function(plot, targ, yr, measure="mfunc") {
-##     inds <- with(plot, plot[targ$TAG != TAG & ]
-}
+## mfunc <- function(val) return(val)  # can be altered for more advanced measurments
+## can_local <- function(plot, targ, yr, measure="mfunc") {
+## ##     inds <- with(plot, plot[targ$TAG != TAG & ]
+## }
 
 ## use tallest 5 trees for hh transect canopy estimates
 can_hh <- function(row, yr, measure="ht_mean") {
