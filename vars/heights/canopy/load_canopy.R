@@ -3,7 +3,7 @@
 ## Description: Load canopy variables
 ## Author: Noah Peart
 ## Created: Fri Mar 13 16:59:40 2015 (-0400)
-## Last-Updated: Tue Mar 24 10:46:54 2015 (-0400)
+## Last-Updated: Tue Mar 24 17:08:14 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 ## Canopy dimensions (permanent plots)
@@ -29,7 +29,9 @@ can_hts <- function(row, yr, measure="ht_mean") {
                                SPLOT==as.numeric(row[["SPLOT"]]), measure])
     can2 <- with(can_plot,
                  can_plot[time==yr & PPLOT==as.numeric(row[["PPLOT"]]), measure])
-    return(ifelse(!is.na(can1), can1, can2))
+
+    if (!length(can2)) return( NA )
+    return(ifelse(!is.na(can1) || !length(can1), can1, can2))
 }
 
 ## Local canopy heights
@@ -40,7 +42,8 @@ can_hts <- function(row, yr, measure="ht_mean") {
 
 ## use tallest 5 trees for hh transect canopy estimates
 can_hh <- function(row, yr, measure="ht_mean") {
-    res <- with(hh_plot, hh_plot[time==yr & TPLOT==as.numeric(row[["TPLOT"]]), measure])
+    res <- with(hh_plot, hh_plot[time==yr & TPLOT==as.numeric(row[["TPLOT"]]) &
+                                   TRAN==row[["TRAN"]], measure])
     return( res )
 }
 

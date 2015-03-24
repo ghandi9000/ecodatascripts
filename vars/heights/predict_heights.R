@@ -3,7 +3,7 @@
 ## Description: Predict missing heights Moosilauke trees (see README.txt for info)
 ## Author: Noah Peart
 ## Created: Mon Mar  2 13:37:06 2015 (-0500)
-## Last-Updated: Mon Mar 23 16:53:30 2015 (-0400)
+## Last-Updated: Tue Mar 24 17:25:50 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -39,12 +39,62 @@ prep_pp <- function(dat, yr, can_func="can_hts") {
     ## Conditions
     is_alive <- interp(~stat == "ALIVE", stat=as.name(stat))
     has_dbh <- interp(~!is.na(dbh), dbh=as.name(dbh))
-    ## has_ht <- interp(~!is.na(ht), ht=as.name(ht))
     res <- dat %>% filter_(~PPLOT > 3, is_alive, has_dbh)
 
     ## Canopy (defined by can_func)
     res$canht <- apply(res, 1, function(x) do.call(can_func, list(row=x, yr=yr)))
     res[,c(cols, stat, dbh, ht, "canht")]
+}
+
+pars <- list(
+    ABBA = list(spp = "abba", model = "gompertz", inds = "full", yrs = c(86, 98, 98, 10)),
+    PIRU = list(spp = "piru", model = "gompertz", inds = "full", yrs = c(86, 87, 98, 10)),
+
+    ## Betula spp.
+    BECO = list(spp = "beco", model = "negexp", inds = "full", yrs = c(86, 98, 98, 10)),
+    BEPA = list(spp = "betula", model = "negexp", inds = "full", yrs = c(86, 98, 98, 10)),
+    BEAL = list(spp = "betula", model = "negexp", inds = "full", yr = c(86, 98, 98, 10)),
+
+    ## Maples
+    ACSA = list(spp = "maples", model = "gompertz", inds = "full", yrs = c(98, 98, 98, 10)),
+    ACPE = list(spp = "maples", model = "gompertz", inds = "full", yrs = c(98, 98, 98, 10)),
+    ACSP = list(spp = "maples", model = "gompertz", inds = "full", yrs = c(98, 98, 98, 10)),
+
+    ## Others
+    FAGR = list(spp = "hardwoods", model = "gompertz", inds = "full", yrs = c(98, 98, 98, 10)),
+    SOAM = list(spp = "soam", model = "gompertz", inds = "full", yrs = c(98, 98, 98, 98)),
+    PRPE = list(spp = "soam", model = "gompertz", inds = "full", yrs = c(98, 98, 98, 98)),
+    PRVI = list(spp = "soam", model = "gompertz", inds = "full", yrs = c(98, 98, 98, 98))
+
+    ## UNID and unlabeled?
+)
+
+fit_pp <- function(dat, pars=pars, basedir=basedir, yrs=c(86, 87, 98, 10), can_func="can_hts") {
+    spec <- toupper(spec)
+    dat[, paste0("htpred", yrs)] <- NA
+    dat[, paste0("canht", yrs)] <- NA
+    for (yr in yrs) dat[, paste0("canht", yr)] <- apply(dat, 1, function(x)
+        do.call(can_func, list(row=x, yr=yr)))  # add canopy heights
+
+    for (spp in levels(dat$SPEC)) {
+        if (spp %in% names(pars)) {  # ignore unidentified species
+            sprintf(spp)
+            moddir <- paste0(basedir, pars[[spec]]$model, "/", pars[[spec]]$inds, "/")
+            source(paste0(moddir, "model.R"))                        # source the approriate model
+            for (i in 1:length(yrs)) {
+                ps <- readRDS(paste0(moddir, tolower(pars[[spec]]$spp), "/", tolower(pars[[spec]]$spp),
+                                     "_", pars[[spec]]$yrs[i], ".rds"))  # read fit parameters
+                inds <- dat$SPEC == spp
+            ##     dat[inds, paste0("htpred", yrs[i])] <-
+            ##         do.call(pars[[spec]]$model,
+            ##                 list(ps = ps,
+            ##                      dbh = dat[inds, paste0("DBH", yrs[i])],
+            ##                      elev = dat[inds, "ELEV"],
+            ##                      canht = dat[inds, paste0("canht", yrs[i])]))
+            ## }
+        }
+    }
+    dat
 }
 
 ################################################################################

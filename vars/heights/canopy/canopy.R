@@ -3,7 +3,7 @@
 ## Description: Estimate canopy height/dbh
 ## Author: Noah Peart
 ## Created: Mon Mar  2 14:31:12 2015 (-0500)
-## Last-Updated: Tue Mar 24 10:46:30 2015 (-0400)
+## Last-Updated: Tue Mar 24 14:40:50 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -48,7 +48,8 @@ canopy_tall_x <- function(dat, plot=NULL, num_trees=5, yrs=c(99, 11),
         tall_x <- sort(dat[inds,][[paste0(cols$ht, yrs[i])]], decreasing = T)[1:num_trees]
         c(ht_mean = mean(tall_x),    # canopy height mean
           ht_med = median(tall_x),   # canopy height median
-          ht_dev = sd(tall_x))       # canopy height sd
+          ht_dev = sd(tall_x),       # canopy height sd
+          count = length(tall_x))
       })
     data.frame(t(res), time = yrs)
 }
