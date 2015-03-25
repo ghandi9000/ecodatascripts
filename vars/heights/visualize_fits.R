@@ -3,7 +3,7 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Tue Mar 24 15:22:10 2015 (-0400)
+## Last-Updated: Wed Mar 25 18:20:03 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -28,11 +28,11 @@ library(dplyr)
 ##
 ################################################################################
 ## 3D
-spec <- "abba"
-model <- "gompertz"
-inds <- "can"
-hh <- TRUE
-years <- c(99, 11)
+spec <- "betula"
+model <- "negexp"
+inds <- "full"
+hh <- FALSE
+years <- c(86)
 preds <- get_preds(spec, years, modtype = model, inds = inds, hh=hh)
 plot_preds(preds)
 add_pred_lines(preds)

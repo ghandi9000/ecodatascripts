@@ -3,7 +3,7 @@
 ## Description: 
 ## Author: Noah Peart
 ## Created: Fri Mar 13 23:35:42 2015 (-0400)
-## Last-Updated: Tue Mar 17 21:32:49 2015 (-0400)
+## Last-Updated: Wed Mar 25 18:14:10 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/heights/negexp/full/model.R")    # model/fit functions
@@ -17,7 +17,7 @@ library(magrittr)
 ##                                 Run fits
 ##
 ################################################################################
-## Can only fit for 98 and 10
+## 86, 98, 10
 base_dir <- "~/work/ecodatascripts/vars/heights/negexp/full/beco/"
 yrs <- c(86, 98, 10)
 spec <- c("beco")

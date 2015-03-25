@@ -3,9 +3,11 @@
 ## Description: Helper functions for visuals
 ## Author: Noah Peart
 ## Created: Tue Mar 24 14:09:20 2015 (-0400)
-## Last-Updated: Tue Mar 24 14:19:04 2015 (-0400)
+## Last-Updated: Wed Mar 25 18:12:42 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
+source("~/work/ecodatascripts/vars/heights/prep.R")  # preps data, adds canhts
+
 library(rgl)
 library(plyr)
 library(dplyr)
