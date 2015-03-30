@@ -3,7 +3,7 @@
 ## Description: Predict missing heights Moosilauke trees (see README.txt for info)
 ## Author: Noah Peart
 ## Created: Mon Mar  2 13:37:06 2015 (-0500)
-## Last-Updated: Fri Mar 27 19:04:11 2015 (-0400)
+## Last-Updated: Mon Mar 30 00:13:44 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")                  # permanent plot data
@@ -85,7 +85,7 @@ table(missed$SPEC) # should be just UNID and/or ""
 
 ## Look at HT vs. DBH for species
 specs <- names(params_pp)
-yr <- 10
+yr <- 86
 
 stat <- paste0("STAT", yr)
 dbh <- paste0("DBH", yr)
@@ -268,5 +268,3 @@ for (spp in specs) {
         points(tst[inds, dbh], tst[inds, pred], col="red", pch=16)
     }
 }
-
-
