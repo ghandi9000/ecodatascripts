@@ -3,7 +3,7 @@
 ## Description: Check height predictions (visualize)
 ## Author: Noah Peart
 ## Created: Mon Mar 30 13:50:55 2015 (-0400)
-## Last-Updated: Mon Mar 30 13:55:17 2015 (-0400)
+## Last-Updated: Mon Mar 30 17:17:42 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/heights/predict_heights.R")  # runs predictions
@@ -57,12 +57,12 @@ for (yr in yrs) {
 
 ## Look at HT vs. DBH for species
 specs <- names(params_tp_low)
-yr <- 99
+yr <- 11
 
 stat <- paste0("STAT", yr)
 dbh <- paste0("DBH", yr)
 ht <- paste0("HT", yr)
-pred <- paste0("htpred", yr)
+pred <- paste0("pred", yr)
 
 par(mfrow=c(4, 4))
 for (spp in specs) {
@@ -100,7 +100,7 @@ yr <- 99
 stat <- paste0("STAT", yr)
 dbh <- paste0("DBH", yr)
 ht <- paste0("HT", yr)
-pred <- paste0("HHhtpred", yr)
+pred <- paste0("pred", yr)
 
 par(mfrow=c(2, 2))
 for (spp in specs) {

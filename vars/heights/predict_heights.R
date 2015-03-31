@@ -3,7 +3,7 @@
 ## Description: Predict missing heights Moosilauke trees (see README.txt for info)
 ## Author: Noah Peart
 ## Created: Mon Mar  2 13:37:06 2015 (-0500)
-## Last-Updated: Mon Mar 30 15:34:06 2015 (-0400)
+## Last-Updated: Mon Mar 30 17:24:38 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")                  # permanent plot data
@@ -58,6 +58,9 @@ params_tp_low <- lapply(params_pp, function(x) {
 params_tp_low[["BESPP"]] <- params_tp_low[["BEAL"]]
 params_tp_low[["UNCO"]] <- params_tp_low[["ABBA"]]  # unidentified coniferous, treat as ABBA
 
+## Problems with BECOs at LL
+params_tp_low[["BECO"]]$yrs <- rep(10, 5)  # fit all with 2010 fits
+
 ## Transects: HH (canopy only model)
 params_tp_hh <- list(
     ABBA = list(spp = "abba", model = "gompertz", inds = "can", yrs = c(99, 99, 99, 11, 11)),
@@ -76,22 +79,34 @@ tp <- fit_tp_hh(tp, params_tp_hh, basedir)
 
 ## Combine predictions for tp into single "pred" column for each year
 yrs <- unique(gsub(".*(..)$", "\\1", grep("^DBH[0-9]+", names(tp), value=T)))
-yrs <- c(87, 98, 99, 10, 11)
-tst <- tp
 for (yr in yrs) {
     pred <- paste0("pred", yr)
     lowpred <- paste0("htpred", yr)
     hhpred <- paste0("HHhtpred", yr)
-    tst[,pred] <- ifelse(tst$ELEVCL == "HH", tst[,hhpred], tst[,lowpred])
+    tp[,pred] <- ifelse(tp$ELEVCL == "HH", tp[,hhpred], tp[,lowpred])
 }
 
+################################################################################
+##
+##                                 Problems
+##
+################################################################################
+## - What to do with HH plots that are missing canopy?
+## - BECOs not fitting well for LL for 99 data (negexp model with only elevation)
+## getting negative heights
+yr <- 99
+dbh <- paste0("DBH",yr)
+pred <- paste0("pred",yr)
 
-sum(tst$SPEC %in% names(params_tp_low) & !is.na(tst$DBH99) & tst$ELEVCL != "HH")
-sum(tst$SPEC %in% names(params_tp_low) & !is.na(tst$DBH99) & tst$ELEVCL == "HH")
-sum(tst$SPEC %in% c("ABBA", "PIRU", "BECO") & !is.na(tst$DBH99) & tst$ELEVCL == "HH")
+skips <- (tp$TRAN == "E335" & tp$TPLOT == 16) | (tp$ELEVCL == "HH" & grepl("^S", tp$TRAN))
+missed <- tp[!skips & !is.na(tp[,dbh]) & is.na(tp[,pred]), ]
+table(missed$TRAN)
+table(missed$TPLOT)
+table(missed$SPEC)
 
-missed <- tst[!is.na(tst$pred99) & !is.na(tst$HHhtpred99) &
-                  abs(tst$pred99 - tst$HHhtpred99) > 2e-13 & !is.na(tst$DBH99), ]
-
-sum(!is.na(tst$DBH99) & tst$pred99 == tst$HHhtpred99, na.rm=T)
-sum(!is.na(tst$DBH99) & tst$pred99 == tst$htpred99, na.rm=T)
+## Negative heights -- solved by fitting with 2010 fits
+range(tp[,pred], na.rm = T)
+sum(!is.na(tp[,pred]) & tp[,pred] < 0)  # 11 BECOs negative in LL plot -4
+negs <- tp[!is.na(tp[,pred]) & tp[,pred] < 0, ]
+table(negs$SPEC)
+table(negs$TPLOT)
