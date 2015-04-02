@@ -3,7 +3,7 @@
 ## Description: Predict missing heights Moosilauke trees (see README.txt for info)
 ## Author: Noah Peart
 ## Created: Mon Mar  2 13:37:06 2015 (-0500)
-## Last-Updated: Mon Mar 30 17:24:38 2015 (-0400)
+## Last-Updated: Thu Apr  2 11:08:23 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")                  # permanent plot data
@@ -94,19 +94,20 @@ for (yr in yrs) {
 ## - What to do with HH plots that are missing canopy?
 ## - BECOs not fitting well for LL for 99 data (negexp model with only elevation)
 ## getting negative heights
-yr <- 99
-dbh <- paste0("DBH",yr)
-pred <- paste0("pred",yr)
 
-skips <- (tp$TRAN == "E335" & tp$TPLOT == 16) | (tp$ELEVCL == "HH" & grepl("^S", tp$TRAN))
-missed <- tp[!skips & !is.na(tp[,dbh]) & is.na(tp[,pred]), ]
-table(missed$TRAN)
-table(missed$TPLOT)
-table(missed$SPEC)
+## yr <- 99
+## dbh <- paste0("DBH",yr)
+## pred <- paste0("pred",yr)
 
-## Negative heights -- solved by fitting with 2010 fits
-range(tp[,pred], na.rm = T)
-sum(!is.na(tp[,pred]) & tp[,pred] < 0)  # 11 BECOs negative in LL plot -4
-negs <- tp[!is.na(tp[,pred]) & tp[,pred] < 0, ]
-table(negs$SPEC)
-table(negs$TPLOT)
+## skips <- (tp$TRAN == "E335" & tp$TPLOT == 16) | (tp$ELEVCL == "HH" & grepl("^S", tp$TRAN))
+## missed <- tp[!skips & !is.na(tp[,dbh]) & is.na(tp[,pred]), ]
+## table(missed$TRAN)
+## table(missed$TPLOT)
+## table(missed$SPEC)
+
+## ## Negative heights -- solved by fitting with 2010 fits
+## range(tp[,pred], na.rm = T)
+## sum(!is.na(tp[,pred]) & tp[,pred] < 0)  # 11 BECOs negative in LL plot -4
+## negs <- tp[!is.na(tp[,pred]) & tp[,pred] < 0, ]
+## table(negs$SPEC)
+## table(negs$TPLOT)
