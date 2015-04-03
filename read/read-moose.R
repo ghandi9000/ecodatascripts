@@ -10,8 +10,9 @@ if (Sys.info()['sysname'] == "Linux") {
     ##
     ##                          Set path to data here!
     ##
-
+    
     ## Fill in path and uncomment the following line
     ## pp <- read.csv("path/to/data")
+
     stop("Not run.")  # remove this
 }
