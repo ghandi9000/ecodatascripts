@@ -3,7 +3,7 @@
 ## Description: Predict missing heights Moosilauke trees (see README.txt for info)
 ## Author: Noah Peart
 ## Created: Mon Mar  2 13:37:06 2015 (-0500)
-## Last-Updated: Thu Apr  2 11:08:23 2015 (-0400)
+## Last-Updated: Thu Apr  2 23:17:05 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")                  # permanent plot data
@@ -73,17 +73,34 @@ params_tp_hh <- list(
 ##                                    Run
 ##
 ################################################################################
+cat("\n\n\n\t\t--- Predicting Heights ---\n\n\n")
 pp <- fit_pp(pp, params_pp, basedir)
 tp <- fit_tp_low(tp, params_tp_low, basedir)
 tp <- fit_tp_hh(tp, params_tp_hh, basedir)
 
-## Combine predictions for tp into single "pred" column for each year
-yrs <- unique(gsub(".*(..)$", "\\1", grep("^DBH[0-9]+", names(tp), value=T)))
-for (yr in yrs) {
-    pred <- paste0("pred", yr)
+## Combine predictions into single "ht" column for each year
+## precedence for transects: observed > HHhtpred > htpred
+ppyrs <- c(86, 87, 98, 10)
+tpyrs <- as.numeric(unique(gsub(".*(..)$", "\\1", grep("^DBH[0-9]+", names(tp), value=T))))
+pp[, paste0("ht", ppyrs)] <- NA
+tp[, paste0("ht", tpyrs)] <- NA
+
+for (yr in ppyrs) {
+    pred <- paste0("htpred", yr)
+    obs <- paste0("HTTCR", yr)
+    ht <- paste0("ht", yr)
+    pp[, ht] <- ifelse(is.na(pp[,obs]), pp[,pred], pp[,obs])
+}
+
+for (yr in tpyrs) {
+    has_obs = TRUE
     lowpred <- paste0("htpred", yr)
     hhpred <- paste0("HHhtpred", yr)
-    tp[,pred] <- ifelse(tp$ELEVCL == "HH", tp[,hhpred], tp[,lowpred])
+    obs <- paste0("HT", yr)
+    if (!(obs %in% names(tp))) has_obs = FALSE
+    ht <- paste0("ht", yr)
+    tp[, ht] <- ifelse(has_obs && !is.na(tp[,obs]), tp[,obs], tp[,hhpred])  # observed, then HH
+    tp[, ht] <- ifelse(is.na(tp[,ht]), tp[,lowpred], tp[,ht])               # if still empty, use low predictions
 }
 
 ################################################################################

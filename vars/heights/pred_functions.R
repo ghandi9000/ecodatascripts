@@ -3,7 +3,7 @@
 ## Description: Functions for predicting heights for permanent/transect plots
 ## Author: Noah Peart
 ## Created: Mon Mar 30 13:47:28 2015 (-0400)
-## Last-Updated: Mon Mar 30 14:10:01 2015 (-0400)
+## Last-Updated: Thu Apr  2 22:32:05 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/heights/canopy/load_canopy.R")  # canopy functions/data
@@ -11,7 +11,7 @@ source("~/work/ecodatascripts/vars/heights/canopy/load_canopy.R")  # canopy func
 ## Permanent plots
 fit_pp <- function(dat, pars, basedir, yrs=c(86, 87, 98, 10), can_func="can_pp") {
     require(dplyr)
-    cat("Fitting Permanent Plots\n")
+    cat("\n\n\t\t--- Fitting Permanent Plots ---\n\n")
     dat[, paste0("htpred", yrs)] <- NA
 
     ## Add canopy heights
@@ -43,7 +43,7 @@ fit_pp <- function(dat, pars, basedir, yrs=c(86, 87, 98, 10), can_func="can_pp")
 
 ## Transects with no canopy (elevation only model)
 fit_tp_low <- function(dat, pars, basedir, yrs=c(87, 98, 99, 10, 11)) {
-    cat("Fitting low transects\n")
+    cat("\n\n\t\t--- Fitting low transects ---\n\n")
     dat[, paste0("htpred", yrs)] <- NA
 
     for (spp in levels(dat$SPEC)) {
@@ -70,7 +70,7 @@ fit_tp_low <- function(dat, pars, basedir, yrs=c(87, 98, 99, 10, 11)) {
 
 ## Transects, HH (model with canopy height no elevation)
 fit_tp_hh <- function(dat, pars, basedir, yrs=c(87, 98, 99, 10, 11), can_func="can_hh_add") {
-    cat("Fitting HH transects\n")
+    cat("\n\n\t\t--- Fitting HH transects ---\n\n")
     dat[, paste0("HHhtpred", yrs)] <- NA
 
     ## Add canopy heights
