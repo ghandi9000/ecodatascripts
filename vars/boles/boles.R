@@ -3,7 +3,7 @@
 ## Description: Estimate bole volumes
 ## Author: Noah Peart
 ## Created: Thu Apr  2 11:08:46 2015 (-0400)
-## Last-Updated: Thu Apr  2 23:17:17 2015 (-0400)
+## Last-Updated: Fri Apr  3 01:21:37 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/heights/predict_heights.R")  # rerun to predict heights to pp/tp
@@ -257,3 +257,18 @@ write.csv(tp, "./temp/transect.csv", row.names=FALSE)
 cat("\n\n\t\t*** Data saved to './temp/transect.csv' and './temp/pp.csv'. ***\n\n")
 
 
+## tst %>% group_by(ASPCL, ELEVCL) %>%
+##     summarise("86"=sum(bv86, na.rm=T),
+##               "87" = sum(bv87, na.rm=T),
+##               "98"=sum(bv98, na.rm=T),
+##               "10"=sum(bv10, na.rm=T))
+
+## res <- tst %>% group_by(ASPCL, ELEVCL) %>%
+##     summarise("bv86"=sum(bv86, na.rm=T),
+##               "bv87" = sum(bv87, na.rm=T),
+##               "bv98"=sum(bv98, na.rm=T),
+##               "bv10"=sum(bv10, na.rm=T),
+##               "ht86"=sum(ht86*(DBH86/100)**2, na.rm=T),
+##               "ht87"=sum(ht87*(DBH87/100)**2, na.rm=T),
+##               "ht98"=sum(ht98*(DBH98/100)**2, na.rm=T),
+##               "ht10"=sum(ht10*(DBH10/100)**2, na.rm=T))
