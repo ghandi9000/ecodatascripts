@@ -3,7 +3,7 @@
 ## Description: Estimate bole volumes
 ## Author: Noah Peart
 ## Created: Thu Apr  2 11:08:46 2015 (-0400)
-## Last-Updated: Fri Apr  3 01:21:37 2015 (-0400)
+## Last-Updated: Fri Apr  3 11:45:45 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/vars/heights/predict_heights.R")  # rerun to predict heights to pp/tp
@@ -19,15 +19,15 @@ cat("\n\n\n\t\t--- Estimating bole volumes ---\n\n\n")
 
 ## Permanent plot variables to use (column names, years)
 ppyrs <- c(86, 87, 98, 10)
-htcol <- "htpred"  # height column
+htcol <- "ht"      # height column
 dbhcol <- "DBH"    # DBH
 speccol <- "SPEC"  # species
 
 ## Transect variables
 tpyrs <- c(87, 98, 99, 10, 11)
-tpdbh <- "DBH"    # DBH column
-tpht <- "htpred"  # height column
-tpspec <- "SPEC"  # species column
+tpdbh <- "DBH"     # DBH column
+tpht <- "ht"       # height column
+tpspec <- "SPEC"   # species column
 
 ## Equation parameters (limits for height and DBH for kozak and clark equations)
 lims <- list(ABBA = c(1.3, 1.3), PIRU = c(1.3, 1.5))  # (min DBH, min Height) for kozak
@@ -255,7 +255,6 @@ if (!("temp" %in% list.files()))
 write.csv(pp, "./temp/pp.csv", row.names=FALSE)
 write.csv(tp, "./temp/transect.csv", row.names=FALSE)
 cat("\n\n\t\t*** Data saved to './temp/transect.csv' and './temp/pp.csv'. ***\n\n")
-
 
 ## tst %>% group_by(ASPCL, ELEVCL) %>%
 ##     summarise("86"=sum(bv86, na.rm=T),
