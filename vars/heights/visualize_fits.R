@@ -3,7 +3,7 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Mon Mar 30 22:12:00 2015 (-0400)
+## Last-Updated: Mon Apr  6 11:52:30 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -28,11 +28,11 @@ library(dplyr)
 ##
 ################################################################################
 ## 3D
-spec <- "beco"
-model <- "negexp"
-inds <- "full"
-hh <- FALSE
-years <- c(98)
+spec <- "abba"
+model <- "gompertz"
+inds <- "can"
+hh <- TRUE
+years <- c(99, 11)
 preds <- get_preds(spec, years, modtype = model, inds = inds, hh=hh)
 plot_preds(preds)
 add_pred_lines(preds)
@@ -79,7 +79,7 @@ writeWebGL(dir=paste0(temp_dir, "abbaHH"))
 
 dat <- rbind(preds[[1]], preds[[2]]) %>%
     mutate(yr = factor(c(rep(99, nrow(preds[[1]])), rep(11, nrow(preds[[2]])))))
-ggplot(dat, aes(dbh, ht, col = yr)) + geom_point(alpha=0.5) + facet_wrap(~ tplot) +
+ggplot(dat, aes(dbh, ht, col = yr)) + geom_point(alpha=0.5) + facet_wrap(~ canht) +
     geom_line(aes(dbh, pred, col = yr)) + ggtitle("HH ABBAs gompertz fits for 99, 11")
 dev.off()
 ggsave(file="abbaHH.pdf")
