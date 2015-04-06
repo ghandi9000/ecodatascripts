@@ -3,7 +3,7 @@
 ## Description: Some visuals for gompertz fits
 ## Author: Noah Peart
 ## Created: Wed Mar 11 20:33:24 2015 (-0400)
-## Last-Updated: Mon Apr  6 11:52:30 2015 (-0400)
+## Last-Updated: Mon Apr  6 14:48:34 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")
@@ -28,7 +28,7 @@ library(dplyr)
 ##
 ################################################################################
 ## 3D
-spec <- "abba"
+spec <- "beco"
 model <- "gompertz"
 inds <- "can"
 hh <- TRUE
