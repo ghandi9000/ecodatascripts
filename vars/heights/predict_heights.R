@@ -3,7 +3,7 @@
 ## Description: Predict missing heights Moosilauke trees (see README.txt for info)
 ## Author: Noah Peart
 ## Created: Mon Mar  2 13:37:06 2015 (-0500)
-## Last-Updated: Thu Apr  2 23:17:05 2015 (-0400)
+## Last-Updated: Fri Apr 24 19:12:00 2015 (-0400)
 ##           By: Noah Peart
 ######################################################################
 source("~/work/ecodatascripts/read/read-moose.R")                  # permanent plot data
@@ -99,7 +99,8 @@ for (yr in tpyrs) {
     obs <- paste0("HT", yr)
     if (!(obs %in% names(tp))) has_obs = FALSE
     ht <- paste0("ht", yr)
-    tp[, ht] <- ifelse(has_obs && !is.na(tp[,obs]), tp[,obs], tp[,hhpred])  # observed, then HH
+    if (has_obs) tp[,ht] <- tp[,obs]                                        # observed first
+    tp[, ht] <- ifelse(!is.na(tp[,ht]), tp[,ht], tp[,hhpred])               # then HH
     tp[, ht] <- ifelse(is.na(tp[,ht]), tp[,lowpred], tp[,ht])               # if still empty, use low predictions
 }
 
